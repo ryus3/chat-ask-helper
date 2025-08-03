@@ -1,18 +1,2 @@
 #!/bin/bash
-# Ultimate vite fix
-
-# Add local node_modules to PATH
-export PATH="$(pwd)/node_modules/.bin:$PATH"
-
-# Check if vite exists in node_modules
-if [ -f "$(pwd)/node_modules/vite/bin/vite.js" ]; then
-    echo "✅ Running vite with node..."
-    exec node "$(pwd)/node_modules/vite/bin/vite.js" "$@"
-elif [ -x "$(pwd)/node_modules/.bin/vite" ]; then
-    echo "✅ Running vite from .bin..."
-    exec "$(pwd)/node_modules/.bin/vite" "$@"
-else
-    echo "🔄 Installing dependencies and running vite..."
-    npm install --silent
-    exec npx vite "$@"
-fi
+exec node "$(dirname "$0")/run-vite.js" "$@"
