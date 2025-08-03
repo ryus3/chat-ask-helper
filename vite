@@ -1,2 +1,3 @@
-#!/bin/bash
-exec node "$(dirname "$0")/run-vite.js" "$@"
+#!/usr/bin/env node
+
+require('./start-server.js');
