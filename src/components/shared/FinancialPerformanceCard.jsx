@@ -137,22 +137,26 @@ const FinancialPerformanceCard = ({
             </div>
           </div>
           
-          {/* فلتر محسن */}
+          {/* فلتر الفترات بتصميم جميل */}
           <div className="relative">
-            <select 
-              value={selectedTimePeriod} 
-              onChange={(e) => {
-                const period = e.target.value;
-                onTimePeriodChange(period);
-                localStorage.setItem('financialTimePeriod', period);
-              }}
-              className="appearance-none bg-background border border-border rounded-lg px-4 py-2 pr-10 text-sm text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
-            >
-              {Object.entries(periodLabels).map(([key, label]) => (
-                <option key={key} value={key} className="bg-background">{label}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <div className="relative group">
+              <select 
+                value={selectedTimePeriod} 
+                onChange={(e) => {
+                  const period = e.target.value;
+                  onTimePeriodChange(period);
+                  localStorage.setItem('financialTimePeriod', period);
+                }}
+                className="appearance-none bg-card/80 backdrop-blur-sm border border-primary/30 rounded-lg px-4 py-2 pl-10 text-sm text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 shadow-sm cursor-pointer font-medium min-w-32"
+              >
+                {Object.entries(periodLabels).map(([key, label]) => (
+                  <option key={key} value={key} className="bg-background text-foreground">{label}</option>
+                ))}
+              </select>
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+            </div>
           </div>
         </div>
       </CardHeader>
