@@ -161,9 +161,7 @@ export default defineConfig(async ({ mode }) => {
         resolve: {
             extensions: ['.jsx', '.js', '.tsx', '.ts', '.json'],
             alias: { 
-                '@': path.resolve(__dirname, './src'),
-                // إضافة aliases لحل مشاكل modules
-                '@supabase/supabase-js': '@supabase/supabase-js/dist/module/index.js'
+                '@': path.resolve(__dirname, './src')
             },
         },
         build: {
@@ -178,10 +176,14 @@ export default defineConfig(async ({ mode }) => {
                     '@babel/types',
                 ],
                 output: {
-                    manualChunks: {
-                        vendor: ['react', 'react-dom'],
-                        ui: ['@radix-ui/react-dialog', '@radix-ui/react-toast', '@radix-ui/react-select'],
-                        utils: ['date-fns', 'lucide-react', 'clsx']
+                    manualChunks: (id) => {
+                        // منع تجميع Supabase modules مع vendor
+                        if (id.includes('@supabase/')) {
+                            return 'supabase';
+                        }
+                        if (id.includes('node_modules')) {
+                            return 'vendor';
+                        }
                     }
                 }
             },
@@ -198,6 +200,7 @@ export default defineConfig(async ({ mode }) => {
                 '@supabase/storage-js',
                 '@supabase/realtime-js',
                 '@supabase/gotrue-js',
+                '@supabase/functions-js',
                 'cross-fetch'
             ],
             force: true
@@ -207,7 +210,13 @@ export default defineConfig(async ({ mode }) => {
             'process.env': {},
         },
         ssr: {
-            noExternal: ['@supabase/supabase-js']
+            noExternal: [
+                '@supabase/supabase-js',
+                '@supabase/postgrest-js',
+                '@supabase/storage-js',
+                '@supabase/realtime-js',
+                '@supabase/gotrue-js'
+            ]
         },
     };
 });
