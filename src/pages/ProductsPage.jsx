@@ -1,12 +1,11 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
-import { useInventory } from '@/contexts/InventoryContext';
+import useUnifiedData from '@/hooks/useUnifiedData';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useLocalStorage } from '@/hooks/useLocalStorage.jsx';
-import { useVariants } from '@/contexts/VariantsContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -24,10 +23,10 @@ import BarcodeScannerDialog from '@/components/products/BarcodeScannerDialog';
 import { toast } from '@/components/ui/use-toast';
 
 const ProductsPage = () => {
-  const location = useLocation();
-  const { products, loading, addToCart, clearCart } = useInventory();
-  const { user, isAdmin, productPermissions, filterProductsByPermissions } = useAuth();
-  const { hasPermission } = usePermissions();
+    const location = useLocation();
+    const { products, variants, isLoading, operations } = useUnifiedData();
+    const { user, isAdmin, productPermissions, filterProductsByPermissions } = useAuth();
+    const { hasPermission } = usePermissions();
   
   const { colors, categories: allCategories, departments: allDepartments } = useVariants();
   
