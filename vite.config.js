@@ -183,8 +183,17 @@ export default defineConfig(async ({ mode }) => {
             },
         },
         optimizeDeps: {
-            include: ['react', 'react-dom', 'react/jsx-runtime'],
-            exclude: ['@supabase/supabase-js']
+            include: [
+                'react', 
+                'react-dom', 
+                'react/jsx-runtime', 
+                '@supabase/supabase-js',
+                'cross-fetch'
+            ],
+            force: true
+        },
+        define: {
+            global: 'globalThis',
         },
     };
 });
