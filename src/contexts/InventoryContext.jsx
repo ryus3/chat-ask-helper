@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useNotifications } from '@/contexts/NotificationsContext';
 import { useNotificationsSystem } from '@/contexts/NotificationsSystemContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { useProducts } from '@/hooks/useProducts.jsx';
 import { useCart } from '@/hooks/useCart.jsx';
 import { autoUpdateBarcodes } from '@/lib/barcode-migration';
