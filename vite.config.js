@@ -194,7 +194,7 @@ export default defineConfig(async ({ mode }) => {
                 'react-dom', 
                 'react/jsx-runtime'
             ],
-            exclude: [],
+            exclude: ['cross-fetch'],
             force: true
         },
         define: {
