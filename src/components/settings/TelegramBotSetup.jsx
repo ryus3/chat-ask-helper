@@ -11,7 +11,7 @@ import {
   MessageCircle, Bot, CheckCircle, AlertTriangle, ExternalLink, Copy,
   Settings, Zap, Shield, Smartphone
 } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const TelegramBotSetup = ({ open, onOpenChange }) => {
   const [botToken, setBotToken] = useState('');

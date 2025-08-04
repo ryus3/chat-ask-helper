@@ -10,7 +10,7 @@ import { toast } from '@/components/ui/use-toast';
 import AiOrderCard from './AiOrderCard';
 import { QuickOrderContent } from '@/components/quick-order/QuickOrderContent';
 import { useNotifications } from '@/contexts/NotificationsContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const AiOrdersManager = ({ onClose }) => {
   const { user, hasPermission } = useAuth();
