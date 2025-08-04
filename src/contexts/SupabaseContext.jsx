@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { supabase } from '@/lib/customSupabaseClient.js';
+import { supabase } from '@/integrations/supabase/client';
 
 const SupabaseContext = createContext(null);
 
@@ -22,12 +22,12 @@ export const SupabaseProvider = ({ children }) => {
         return data;
       },
       async create(category) {
-        const { data, error } = await supabase.from('categories').insert(category).select().single();
+        const { data, error } = await supabase.from('categories').insert(category).select().maybeSingle();
         if (error) throw error;
         return data;
       },
       async update(id, updates) {
-        const { data, error } = await supabase.from('categories').update(updates).eq('id', id).select().single();
+        const { data, error } = await supabase.from('categories').update(updates).eq('id', id).select().maybeSingle();
         if (error) throw error;
         return data;
       },
@@ -46,12 +46,12 @@ export const SupabaseProvider = ({ children }) => {
         return data;
       },
       async create(color) {
-        const { data, error } = await supabase.from('colors').insert(color).select().single();
+        const { data, error } = await supabase.from('colors').insert(color).select().maybeSingle();
         if (error) throw error;
         return data;
       },
       async update(id, updates) {
-        const { data, error } = await supabase.from('colors').update(updates).eq('id', id).select().single();
+        const { data, error } = await supabase.from('colors').update(updates).eq('id', id).select().maybeSingle();
         if (error) throw error;
         return data;
       },
@@ -70,12 +70,12 @@ export const SupabaseProvider = ({ children }) => {
         return data;
       },
       async create(size) {
-        const { data, error } = await supabase.from('sizes').insert(size).select().single();
+        const { data, error } = await supabase.from('sizes').insert(size).select().maybeSingle();
         if (error) throw error;
         return data;
       },
       async update(id, updates) {
-        const { data, error } = await supabase.from('sizes').update(updates).eq('id', id).select().single();
+        const { data, error } = await supabase.from('sizes').update(updates).eq('id', id).select().maybeSingle();
         if (error) throw error;
         return data;
       },
@@ -120,17 +120,17 @@ export const SupabaseProvider = ({ children }) => {
             inventory(quantity, reserved_quantity, min_stock)
           `)
           .eq('id', id)
-          .single();
+          .maybeSingle();
         if (error) throw error;
         return data;
       },
       async create(product) {
-        const { data, error } = await supabase.from('products').insert(product).select().single();
+        const { data, error } = await supabase.from('products').insert(product).select().maybeSingle();
         if (error) throw error;
         return data;
       },
       async update(id, updates) {
-        const { data, error } = await supabase.from('products').update(updates).eq('id', id).select().single();
+        const { data, error } = await supabase.from('products').update(updates).eq('id', id).select().maybeSingle();
         if (error) throw error;
         return data;
       },

@@ -160,7 +160,11 @@ export default defineConfig(async ({ mode }) => {
         },
         resolve: {
             extensions: ['.jsx', '.js', '.tsx', '.ts', '.json'],
-            alias: { '@': path.resolve(__dirname, './src') },
+            alias: { 
+                '@': path.resolve(__dirname, './src'),
+                // إضافة aliases لحل مشاكل modules
+                '@supabase/supabase-js': '@supabase/supabase-js/dist/module/index.js'
+            },
         },
         build: {
             target: 'es2015',
@@ -188,12 +192,22 @@ export default defineConfig(async ({ mode }) => {
                 'react-dom', 
                 'react/jsx-runtime'
             ],
-            exclude: ['@supabase/supabase-js', 'cross-fetch'],
+            exclude: [
+                '@supabase/supabase-js',
+                '@supabase/postgrest-js',
+                '@supabase/storage-js',
+                '@supabase/realtime-js',
+                '@supabase/gotrue-js',
+                'cross-fetch'
+            ],
             force: true
         },
         define: {
             global: 'globalThis',
             'process.env': {},
+        },
+        ssr: {
+            noExternal: ['@supabase/supabase-js']
         },
     };
 });
