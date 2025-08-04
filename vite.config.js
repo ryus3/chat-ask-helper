@@ -194,29 +194,11 @@ export default defineConfig(async ({ mode }) => {
                 'react-dom', 
                 'react/jsx-runtime'
             ],
-            exclude: [
-                '@supabase/supabase-js',
-                '@supabase/postgrest-js',
-                '@supabase/storage-js',
-                '@supabase/realtime-js',
-                '@supabase/gotrue-js',
-                '@supabase/functions-js',
-                'cross-fetch'
-            ],
+            exclude: [],
             force: true
         },
         define: {
             global: 'globalThis',
-            'process.env': {},
-        },
-        ssr: {
-            noExternal: [
-                '@supabase/supabase-js',
-                '@supabase/postgrest-js',
-                '@supabase/storage-js',
-                '@supabase/realtime-js',
-                '@supabase/gotrue-js'
-            ]
         },
     };
 });
