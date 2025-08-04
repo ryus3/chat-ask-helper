@@ -1,6 +1,6 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 
 // إنشاء Query Client مع إعدادات محسنة
