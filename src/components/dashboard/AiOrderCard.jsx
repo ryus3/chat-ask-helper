@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { User, Phone, MapPin, Package, Edit, Trash2, ShieldCheck, Loader2, MessageCircle, Bot } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { toast } from '@/components/ui/use-toast';
 
 const AiOrderCard = ({ order, isSelected, onSelect, onEdit }) => {
-    const { approveAiOrder, deleteOrders } = useInventory();
+    const { approveAiOrder, deleteOrders } = useUnifiedInventory();
     const { user, hasPermission } = useAuth();
     const [isProcessing, setIsProcessing] = React.useState(false);
 

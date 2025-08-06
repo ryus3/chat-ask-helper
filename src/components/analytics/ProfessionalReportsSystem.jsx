@@ -43,7 +43,7 @@ import {
   Zap,
   Star
 } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, startOfYear, endOfYear, subDays, isWithinInterval } from 'date-fns';
@@ -54,7 +54,7 @@ import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
 import { cn } from '@/lib/utils';
 
 const ProfessionalReportsSystem = () => {
-  const { products, orders, loading, expenses } = useInventory();
+  const { products, orders, loading, expenses } = useUnifiedInventory();
   const { allUsers } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [dateRange, setDateRange] = useState({

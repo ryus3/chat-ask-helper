@@ -3,13 +3,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { toast } from '@/components/ui/use-toast';
 import Loader from '@/components/ui/loader';
 import { Card, CardContent } from '@/components/ui/card';
 
 const EditStockDialog = ({ item, open, onOpenChange }) => {
-  const { updateVariantStock } = useInventory();
+  const { updateVariantStock } = useUnifiedInventory();
   const [newQuantity, setNewQuantity] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

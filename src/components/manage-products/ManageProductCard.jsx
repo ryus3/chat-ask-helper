@@ -2,13 +2,13 @@ import React, { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2, Printer, Hash } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
     
 const ManageProductCard = ({ product, onDelete, onPrint }) => {
   const navigate = useNavigate();
-  const { settings } = useInventory();
+  const { settings } = useUnifiedInventory();
   const totalStock = useMemo(() => {
     if (!product.variants || product.variants.length === 0) return 0;
     return product.variants.reduce((sum, v) => {

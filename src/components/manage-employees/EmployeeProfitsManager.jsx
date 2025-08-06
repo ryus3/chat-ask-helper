@@ -8,14 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/components/ui/use-toast';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { Badge } from '@/components/ui/badge';
 import { DollarSign, Users, TrendingUp, Calculator, Settings, Loader2 } from 'lucide-react';
 import ProfitCalculatorResult from './ProfitCalculatorResult';
 
 const EmployeeProfitsManager = ({ open, onOpenChange }) => {
-  const { products, employeeProfitRules, setEmployeeProfitRule, getEmployeeProfitRules, calculateProfit } = useInventory();
+  const { products, employeeProfitRules, setEmployeeProfitRule, getEmployeeProfitRules, calculateProfit } = useUnifiedInventory();
   const { allUsers } = useAuth();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showEmployeeDialog, setShowEmployeeDialog] = useState(false);
@@ -333,7 +333,7 @@ const EmployeeProfitsManager = ({ open, onOpenChange }) => {
 
 // مكون حوار قواعد الأرباح للموظف المحدد
 const EmployeeProfitRuleDialog = ({ open, onOpenChange, employee }) => {
-  const { products, categories, departments, employeeProfitRules, setEmployeeProfitRule, getEmployeeProfitRules } = useInventory();
+  const { products, categories, departments, employeeProfitRules, setEmployeeProfitRule, getEmployeeProfitRules } = useUnifiedInventory();
   const [ruleType, setRuleType] = useState('product');
   const [targetId, setTargetId] = useState('');
   const [profitAmount, setProfitAmount] = useState('');

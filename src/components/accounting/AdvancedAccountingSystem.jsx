@@ -28,7 +28,7 @@ import {
   Hourglass
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
@@ -36,7 +36,7 @@ import { ar } from 'date-fns/locale';
 import StatCard from '@/components/dashboard/StatCard';
 
 const AdvancedAccountingSystem = () => {
-  const { accounting, orders, products, settings, settlementInvoices, calculateProfit, allUsers } = useInventory();
+  const { accounting, orders, products, settings, settlementInvoices, calculateProfit, allUsers } = useUnifiedInventory();
   const { hasPermission, user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [activeTab, setActiveTab] = useState('overview');

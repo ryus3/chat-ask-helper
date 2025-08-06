@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useProfits } from '@/contexts/ProfitsContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,11 +35,11 @@ const EmployeeFollowUpPage = () => {
     calculateManagerProfit, 
     calculateProfit, 
     updateOrder, 
-    refetchProducts, 
+    refreshData, 
     settlementInvoices, 
     deleteOrders,
     expenses
-  } = useInventory();
+  } = useUnifiedInventory();
   const { profits } = useProfits();
   const [searchParams] = useSearchParams();
   
@@ -260,7 +260,7 @@ const EmployeeFollowUpPage = () => {
         (payload) => {
           console.log('🔄 Real-time update for orders:', payload);
           // إعادة تحديث الطلبات
-          refetchProducts && refetchProducts();
+          refreshData && refreshData();
         }
       )
       .subscribe();
@@ -278,7 +278,7 @@ const EmployeeFollowUpPage = () => {
         (payload) => {
           console.log('🔄 Real-time update for profits:', payload);
           // إعادة تحديث البيانات
-          refetchProducts && refetchProducts();
+          refreshData && refreshData();
         }
       )
       .subscribe();
@@ -288,7 +288,7 @@ const EmployeeFollowUpPage = () => {
       supabase.removeChannel(ordersChannel);
       supabase.removeChannel(profitsChannel);
     };
-  }, [refetchProducts]);
+  }, [refreshData]);
 
   // معرف المدير الرئيسي - تصفية طلباته
   const ADMIN_ID = '91484496-b887-44f7-9e5d-be9db5567604';

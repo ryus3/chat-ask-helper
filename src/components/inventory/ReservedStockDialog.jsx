@@ -15,7 +15,7 @@ import { ar } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import usePermissions from '@/hooks/usePermissions';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { supabase } from '@/integrations/supabase/client';
 
 
@@ -25,7 +25,7 @@ const ReservedStockDialog = ({ open, onOpenChange }) => {
   const [employees, setEmployees] = useState([]);
   const { user } = useAuth();
   const { isAdmin } = usePermissions();
-  const { orders } = useInventory();
+  const { orders } = useUnifiedInventory();
 
   // تحميل بيانات الموظفين فوراً عند فتح النافذة
   useEffect(() => {

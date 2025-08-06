@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Camera, QrCode, AlertTriangle, Play, Pause, ListChecks, CheckCircle, XCircle } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { toast } from '@/components/ui/use-toast';
 
 
@@ -37,7 +37,7 @@ const BarcodeInventoryCard = () => {
 };
 
 const BarcodeInventoryDialog = ({ open, onOpenChange }) => {
-    const { products } = useInventory(); // المنتجات مفلترة تلقائياً حسب الصلاحيات
+    const { products } = useUnifiedInventory(); // المنتجات مفلترة تلقائياً حسب الصلاحيات
     const [isScanning, setIsScanning] = useState(false);
     const [scannedItems, setScannedItems] = useState({});
     const [cameraError, setCameraError] = useState(null);

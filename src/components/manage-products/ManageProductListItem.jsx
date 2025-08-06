@@ -3,13 +3,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import ManageProductActions from './ManageProductActions';
 import { cn } from '@/lib/utils';
 import { Star, Hash } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const ManageProductListItem = ({ product, isSelected, onSelect, onProductUpdate, refetchProducts }) => {
   const navigate = useNavigate();
-  const { settings } = useInventory();
+  const { settings } = useUnifiedInventory();
 
   const totalStock = useMemo(() => {
     if (!product.variants || product.variants.length === 0) return 0;

@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAlWaseet } from '@/contexts/AlWaseetContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import usePermissionBasedData from '@/hooks/usePermissionBasedData';
@@ -117,7 +117,7 @@ const SectionHeader = ({ icon, title, description }) => {
 const SettingsPage = () => {
   const { user, updateUser } = useAuth();
   const { hasPermission } = usePermissions();
-  const { settings, updateSettings } = useInventory();
+  const { settings, updateSettings } = useUnifiedInventory();
   const { isLoggedIn: isWaseetLoggedIn, waseetUser, logout: logoutWaseet, setSyncInterval, syncInterval } = useAlWaseet();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();

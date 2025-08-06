@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { CheckCircle, XCircle, AlertTriangle, TrendingUp, TrendingDown, BarChart3, Package, Users, ShoppingCart } from 'lucide-react';
@@ -14,7 +14,7 @@ const SystemStatusDashboard = () => {
     settings,
     accounting,
     purchases
-  } = useInventory();
+  } = useUnifiedInventory();
   
   const { allUsers } = useAuth();
   
