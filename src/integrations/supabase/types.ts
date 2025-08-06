@@ -128,6 +128,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_user_role: {
+        Args: { user_uuid: string; required_role: string }
+        Returns: boolean
+      }
       get_user_by_username: {
         Args: { username_input: string }
         Returns: {
