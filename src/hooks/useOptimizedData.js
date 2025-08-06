@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useGlobalData } from '@/contexts/GlobalDataProvider';
+import React, { useMemo } from 'react';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 
@@ -11,19 +11,13 @@ export const useOptimizedData = (dataTypes = []) => {
   const {
     products: allProducts,
     orders: allOrders,
-    inventory,
-    purchases,
-    variants,
     profits: allProfits,
-    expenses,
     customers,
-    cashSources,
-    isLoading,
+    loading: isLoading,
     error,
-    invalidateQueries,
-    updateCache,
-    queryClient
-  } = useGlobalData();
+    refreshData: invalidateQueries,
+    updateProduct: updateCache
+  } = useUnifiedInventory();
 
   const { user } = useAuth();
   const { canViewAllData, filterDataByUser, filterProductsByPermissions } = usePermissions();
@@ -51,42 +45,12 @@ export const useOptimizedData = (dataTypes = []) => {
         : (allProfits || []).filter(p => p.employee_id === user?.id);
     }
     
-    // إضافة باقي البيانات حسب الحاجة
-    if (!dataTypes.length || dataTypes.includes('inventory')) {
-      result.inventory = inventory || [];
-    }
-    
-    if (!dataTypes.length || dataTypes.includes('purchases')) {
-      result.purchases = purchases || [];
-    }
-    
-    if (!dataTypes.length || dataTypes.includes('variants')) {
-      result.variants = variants || {};
-    }
-    
-    if (!dataTypes.length || dataTypes.includes('expenses')) {
-      result.expenses = expenses || [];
-    }
-    
-    if (!dataTypes.length || dataTypes.includes('customers')) {
-      result.customers = customers || [];
-    }
-    
-    if (!dataTypes.length || dataTypes.includes('cashSources')) {
-      result.cashSources = cashSources || [];
-    }
-
     return result;
   }, [
     allProducts,
     allOrders,
     allProfits,
-    inventory,
-    purchases,
-    variants,
-    expenses,
     customers,
-    cashSources,
     filterProductsByPermissions,
     canViewAllData,
     filterDataByUser,
@@ -197,8 +161,7 @@ export const useOptimizedData = (dataTypes = []) => {
     operations,
     
     // معلومات إضافية
-    permissions: { canViewAllData, userId: user?.id },
-    queryClient
+    permissions: { canViewAllData, userId: user?.id }
   };
 };
 

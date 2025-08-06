@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { scrollToTopInstant } from '@/utils/scrollToTop';
 
 // Hook لتطبيق scroll-to-top تلقائياً على أي صفحة

@@ -1,13 +1,12 @@
-import { useState, useCallback, useMemo } from 'react';
-import { useOptimizedData } from './useOptimizedData';
-import { useToast } from '@/components/ui/use-toast';
+import React, { useState, useCallback, useMemo } from 'react';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
+import { toast } from '@/hooks/use-toast';
 
 /**
  * Hook موحد لإدارة جميع العمليات والحالات
  * يوفر واجهة موحدة لجميع الصفحات
  */
 export const useUnifiedDataManager = (pageType) => {
-  const { toast } = useToast();
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('created_at');
@@ -16,42 +15,21 @@ export const useUnifiedDataManager = (pageType) => {
   const [itemsPerPage] = useState(20);
   const [filters, setFilters] = useState({});
 
-  // تحديد أنواع البيانات المطلوبة حسب نوع الصفحة
-  const requiredDataTypes = useMemo(() => {
-    switch (pageType) {
-      case 'dashboard':
-        return ['products', 'orders', 'profits', 'inventory'];
-      case 'products':
-        return ['products', 'variants'];
-      case 'orders':
-        return ['orders', 'customers', 'products'];
-      case 'inventory':
-        return ['products', 'inventory'];
-      case 'profits':
-        return ['profits', 'orders'];
-      case 'customers':
-        return ['customers', 'orders'];
-      default:
-        return [];
-    }
-  }, [pageType]);
-
-  const data = useOptimizedData(requiredDataTypes);
+  // الحصول على البيانات الموحدة
+  const inventoryData = useUnifiedInventory();
 
   // فلترة وترتيب البيانات
   const processedData = useMemo(() => {
     const getDataByType = () => {
       switch (pageType) {
         case 'products':
-          return data.products || [];
+          return inventoryData.products || [];
         case 'orders':
-          return data.orders || [];
+          return inventoryData.orders || [];
         case 'customers':
-          return data.customers || [];
+          return inventoryData.customers || [];
         case 'profits':
-          return data.profits || [];
-        case 'inventory':
-          return data.inventory || [];
+          return inventoryData.profits || [];
         default:
           return [];
       }
@@ -93,7 +71,7 @@ export const useUnifiedDataManager = (pageType) => {
     });
 
     return items;
-  }, [data, pageType, searchQuery, filters, sortBy, sortOrder]);
+  }, [inventoryData, pageType, searchQuery, filters, sortBy, sortOrder]);
 
   // التصفح
   const paginatedData = useMemo(() => {
@@ -169,21 +147,17 @@ export const useUnifiedDataManager = (pageType) => {
 
     // عمليات البيانات
     refreshData: useCallback(() => {
-      data.operations.refreshData(requiredDataTypes);
+      inventoryData.refreshData();
       toast({
         title: "تم تحديث البيانات",
         description: "تم تحديث جميع البيانات بنجاح"
       });
-    }, [data.operations, requiredDataTypes, toast]),
+    }, [inventoryData]),
 
     // عمليات CRUD موحدة
     createItem: useCallback(async (newItem) => {
       try {
-        // سيتم تنفيذ منطق الإنشاء لاحقاً
-        toast({
-          title: "تم الإنشاء بنجاح",
-          description: "تم إنشاء العنصر الجديد"
-        });
+        await inventoryData.addProduct(newItem);
         return true;
       } catch (error) {
         toast({
@@ -193,15 +167,11 @@ export const useUnifiedDataManager = (pageType) => {
         });
         return false;
       }
-    }, [toast]),
+    }, [inventoryData]),
 
     updateItem: useCallback(async (id, updates) => {
       try {
-        // سيتم تنفيذ منطق التحديث لاحقاً
-        toast({
-          title: "تم التحديث بنجاح",
-          description: "تم تحديث العنصر"
-        });
+        await inventoryData.updateProduct(id, updates);
         return true;
       } catch (error) {
         toast({
@@ -211,36 +181,18 @@ export const useUnifiedDataManager = (pageType) => {
         });
         return false;
       }
-    }, [toast]),
-
-    deleteItem: useCallback(async (id) => {
-      try {
-        // سيتم تنفيذ منطق الحذف لاحقاً
-        toast({
-          title: "تم الحذف بنجاح",
-          description: "تم حذف العنصر"
-        });
-        return true;
-      } catch (error) {
-        toast({
-          title: "خطأ في الحذف",
-          description: error.message,
-          variant: "destructive"
-        });
-        return false;
-      }
-    }, [toast])
+    }, [inventoryData])
   };
 
   return {
     // البيانات
     data: paginatedData,
     allData: processedData,
-    calculations: data.calculations,
+    calculations: inventoryData.calculations,
     
     // حالة التحميل
-    isLoading: data.isLoading,
-    error: data.error,
+    isLoading: inventoryData.loading,
+    error: inventoryData.error,
     
     // حالة واجهة المستخدم
     selectedItems,
@@ -257,7 +209,6 @@ export const useUnifiedDataManager = (pageType) => {
     operations,
     
     // معلومات إضافية
-    permissions: data.permissions,
     hasSelection: selectedItems.length > 0,
     isAllSelected: selectedItems.length === paginatedData.length
   };

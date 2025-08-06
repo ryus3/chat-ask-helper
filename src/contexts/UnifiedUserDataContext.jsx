@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { useGlobalData } from '@/contexts/GlobalDataProvider';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { getUserIds } from '@/utils/userIdSystem';
 
 /**
@@ -24,8 +24,8 @@ export const UnifiedUserDataProvider = ({ children }) => {
     profits: allProfits, 
     customers: allCustomers,
     products: allProducts,
-    isLoading 
-  } = useGlobalData();
+    loading: isLoading 
+  } = useUnifiedInventory();
 
   // معرفات المستخدم الموحدة
   const userIds = useMemo(() => {

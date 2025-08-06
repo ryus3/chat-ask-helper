@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useGlobalData } from '@/contexts/GlobalDataProvider';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 
@@ -9,7 +9,7 @@ import { usePermissions } from '@/hooks/usePermissions';
  */
 const useUnifiedData = () => {
   // الحصول على البيانات من المصادر الموحدة بحماية من الأخطاء
-  const globalData = useGlobalData() || {};
+  const inventoryData = useUnifiedInventory() || {};
   const authContext = useAuth() || {};
   const permissionsContext = usePermissions() || {};
 
@@ -18,7 +18,6 @@ const useUnifiedData = () => {
     products = [], 
     orders = [], 
     customers = [],
-    inventory = [],
     categories = [],
     colors = [],
     sizes = [],
@@ -29,11 +28,8 @@ const useUnifiedData = () => {
     refreshData = () => {},
     updateProduct = () => {},
     addProduct = () => {},
-    updateOrder = () => {},
-    addOrder = () => {},
-    updateCustomer = () => {},
-    addCustomer = () => {}
-  } = globalData;
+    updateOrder = () => {}
+  } = inventoryData;
 
   const { user, profile } = authContext;
   const { hasPermission, isAdmin, canViewAllData } = permissionsContext;
