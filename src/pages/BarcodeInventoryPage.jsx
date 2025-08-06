@@ -8,13 +8,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Camera, QrCode, AlertTriangle, Play, Pause, ListChecks, CheckCircle, XCircle } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useFilteredProducts } from '@/hooks/useFilteredProducts';
 import { toast } from '@/components/ui/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BarcodeInventoryPage = () => {
-    const { allProducts } = useInventory(); // جلب كل المنتجات
+    const { allProducts } = useUnifiedInventory(); // جلب كل المنتجات
     const products = useFilteredProducts(allProducts); // تطبيق الفلترة حسب الصلاحيات
     const [isScanning, setIsScanning] = useState(false);
     const [scannedItems, setScannedItems] = useState({});

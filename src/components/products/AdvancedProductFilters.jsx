@@ -8,13 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { SlidersHorizontal, X, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { useVariants } from '@/contexts/VariantsContext';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const AdvancedProductFilters = ({ open, onOpenChange, filters, setFilters }) => {
   const { isAdmin, productPermissions } = useAuth();
   const { categories, departments, seasonsOccasions, productTypes, colors, sizes } = useVariants();
-  const { products } = useInventory();
+  const { products } = useUnifiedInventory();
   
   // حفظ إعدادات الفلاتر
   const [savedFilters, setSavedFilters] = useLocalStorage('advancedProductFilters', {});

@@ -14,6 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
+      cash_movements: {
+        Row: {
+          amount: number
+          balance_after: number
+          balance_before: number
+          cash_source_id: string
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          movement_type: string
+          reference_id: string | null
+          reference_type: string
+        }
+        Insert: {
+          amount: number
+          balance_after?: number
+          balance_before?: number
+          cash_source_id: string
+          created_at?: string
+          created_by?: string | null
+          description: string
+          id?: string
+          movement_type: string
+          reference_id?: string | null
+          reference_type: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          balance_before?: number
+          cash_source_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          movement_type?: string
+          reference_id?: string | null
+          reference_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_movements_cash_source_id_fkey"
+            columns: ["cash_source_id"]
+            isOneToOne: false
+            referencedRelation: "cash_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_sources: {
+        Row: {
+          created_at: string
+          current_balance: number
+          description: string | null
+          id: string
+          initial_balance: number
+          is_active: boolean
+          name: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_balance?: number
+          description?: string | null
+          id?: string
+          initial_balance?: number
+          is_active?: boolean
+          name: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_balance?: number
+          description?: string | null
+          id?: string
+          initial_balance?: number
+          is_active?: boolean
+          name?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string | null
@@ -825,6 +911,33 @@ export type Database = {
           },
         ]
       }
+      settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       sizes: {
         Row: {
           created_at: string | null
@@ -889,6 +1002,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_cash_to_source: {
+        Args: {
+          source_id: string
+          amount: number
+          description: string
+          reference_type?: string
+          reference_id?: string
+        }
+        Returns: undefined
+      }
       check_user_role: {
         Args: { user_uuid: string; required_role: string }
         Returns: boolean
@@ -904,6 +1027,10 @@ export type Database = {
       generate_order_qr: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_enhanced_main_cash_balance: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       get_user_by_username: {
         Args: { username_input: string }
@@ -925,6 +1052,16 @@ export type Database = {
       username_exists: {
         Args: { username_input: string }
         Returns: boolean
+      }
+      withdraw_cash_from_source: {
+        Args: {
+          source_id: string
+          amount: number
+          description: string
+          reference_type?: string
+          reference_id?: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

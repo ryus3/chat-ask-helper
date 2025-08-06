@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useProfits } from '@/contexts/ProfitsContext';
 import StatCard from '@/components/dashboard/StatCard';
 import ManagerProfitsDialog from '@/components/profits/ManagerProfitsDialog';
@@ -19,7 +19,7 @@ const ManagerProfitsCard = ({
   timePeriod = 'all'
 }) => {
   const { user } = useAuth();
-  const { orders: contextOrders, calculateProfit: contextCalculateProfit } = useInventory();
+  const { orders: contextOrders, calculateProfit: contextCalculateProfit } = useUnifiedInventory();
   const { profits: contextProfits } = useProfits();
   const [isManagerProfitsDialogOpen, setIsManagerProfitsDialogOpen] = useState(false);
 

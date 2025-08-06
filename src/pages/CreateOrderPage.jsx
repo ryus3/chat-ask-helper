@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAlWaseet } from '@/contexts/AlWaseetContext';
 import { toast } from '@/components/ui/use-toast';
 import { getCities, getRegionsByCity, createAlWaseetOrder } from '@/lib/alwaseet-api';
@@ -16,7 +16,7 @@ import DeliveryPartnerDialog from '@/components/DeliveryPartnerDialog';
 import ProductSelectionDialog from '@/components/products/ProductSelectionDialog';
 
 const CreateOrderPage = () => {
-  const { createOrder } = useInventory();
+  const { createOrder } = useUnifiedInventory();
   const { isLoggedIn: isWaseetLoggedIn, token: waseetToken, activePartner } = useAlWaseet();
   const [deliveryPartnerDialogOpen, setDeliveryPartnerDialogOpen] = useState(false);
   const [formData, setFormData] = useState({

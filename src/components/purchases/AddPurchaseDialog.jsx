@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useImprovedPurchases } from '@/hooks/useImprovedPurchases';
 import { useCashSources } from '@/hooks/useCashSources';
 import { toast } from '@/hooks/use-toast';

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useProfits } from '@/contexts/ProfitsContext';
@@ -42,7 +42,7 @@ import UnifiedProfitDisplay from '@/components/shared/UnifiedProfitDisplay';
 import { Button } from '@/components/ui/button';
 
 const ProfitsSummaryPage = () => {
-  const { orders, calculateProfit, accounting, requestProfitSettlement, settlementInvoices, addExpense, deleteExpense, calculateManagerProfit, updateOrder, deleteOrders } = useInventory();
+  const { orders, calculateProfit, accounting, requestProfitSettlement, settlementInvoices, addExpense, deleteExpense, calculateManagerProfit, updateOrder, deleteOrders } = useUnifiedInventory();
   const { user, allUsers } = useAuth();
   const { hasPermission } = usePermissions();
   const { profits, createSettlementRequest, markInvoiceReceived } = useProfits();

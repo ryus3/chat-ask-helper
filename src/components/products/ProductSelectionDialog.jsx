@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -109,7 +109,7 @@ const ProductItem = ({ product, onSelect }) => {
 };
 
 const ProductSelectionDialog = ({ open, onOpenChange, onConfirm, initialCart = [] }) => {
-  const { products } = useInventory();
+  const { products } = useUnifiedInventory();
   const { filterProductsByPermissions } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);

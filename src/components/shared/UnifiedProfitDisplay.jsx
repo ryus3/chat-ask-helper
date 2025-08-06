@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import StatCard from '@/components/dashboard/StatCard';
 import { useAdvancedProfitsAnalysis } from '@/hooks/useAdvancedProfitsAnalysis';
 import { startOfMonth, endOfMonth, parseISO, isValid } from 'date-fns';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -47,7 +47,7 @@ const UnifiedProfitDisplay = ({
   datePeriod = 'month', // إضافة فترة التاريخ
   dateRange = null // تمرير نطاق التاريخ مباشرة
 }) => {
-  const { orders, accounting } = useInventory();
+  const { orders, accounting } = useUnifiedInventory();
   const { user: currentUser } = useAuth();
   const [allProfits, setAllProfits] = useState([]);
   const [settlementInvoices, setSettlementInvoices] = useState([]);

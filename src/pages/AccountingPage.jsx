@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useCashSources } from '@/hooks/useCashSources';
@@ -139,7 +139,7 @@ const EditCapitalDialog = ({ open, onOpenChange, currentCapital, onSave }) => {
 };
 
 const AccountingPage = () => {
-    const { orders, purchases, accounting, products, addExpense, deleteExpense, updateCapital, settlementInvoices, calculateManagerProfit, calculateProfit } = useInventory();
+    const { orders, purchases, accounting, products, addExpense, deleteExpense, updateCapital, settlementInvoices, calculateManagerProfit, calculateProfit } = useUnifiedInventory();
     const { user: currentUser, allUsers } = useAuth();
     const { hasPermission } = usePermissions();
     const { getTotalSourcesBalance, getMainCashBalance, getTotalAllSourcesBalance, cashSources } = useCashSources();

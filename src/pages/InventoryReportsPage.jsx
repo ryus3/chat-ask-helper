@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Download, Printer } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import InventoryReportPDF from '@/components/pdf/InventoryReportPDF';
 import { motion } from 'framer-motion';
 
 const InventoryReportsPage = () => {
-  const { products, settings } = useInventory();
+  const { products, settings } = useUnifiedInventory();
   const [showPreview, setShowPreview] = useState(false);
 
   const handlePrint = () => {

@@ -10,10 +10,10 @@ import {
   Truck, DollarSign, Settings, MapPin, 
   Clock, Package, Users 
 } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 
 const DeliverySettingsDialog = ({ open, onOpenChange }) => {
-  const { settings, updateSettings } = useInventory();
+  const { settings, updateSettings } = useUnifiedInventory();
   
   const [localSettings, setLocalSettings] = useState({
     deliveryFee: settings?.deliveryFee || 5000,

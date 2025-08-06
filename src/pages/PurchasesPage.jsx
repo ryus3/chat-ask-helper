@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useImprovedPurchases } from '@/hooks/useImprovedPurchases';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, ArrowRight } from 'lucide-react';
@@ -18,7 +18,7 @@ import PurchaseDetailsDialog from '@/components/purchases/PurchaseDetailsDialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const PurchasesPage = () => {
-  const { purchases: inventoryPurchases, loading: inventoryLoading } = useInventory();
+  const { purchases: inventoryPurchases, loading: inventoryLoading } = useUnifiedInventory();
   const { purchases: hookPurchases, loading: hookLoading, fetchPurchases, deletePurchase } = useImprovedPurchases();
   const { hasPermission } = usePermissions();
 

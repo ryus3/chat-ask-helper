@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { useVariants } from '@/contexts/VariantsContext';
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandList } from '@/components/ui/command';
@@ -16,7 +16,7 @@ import AddEditSizeDialog from '@/components/manage-variants/AddEditSizeDialog';
 import BarcodeScannerDialog from '@/components/products/BarcodeScannerDialog';
 
 const SelectProductForPurchaseDialog = ({ open, onOpenChange, onItemsAdd }) => {
-    const { products, settings } = useInventory();
+    const { products, settings } = useUnifiedInventory();
     const { filterProductsByPermissions } = useAuth();
     const { colors, sizes, addColor, addSize } = useVariants();
     const navigate = useNavigate();

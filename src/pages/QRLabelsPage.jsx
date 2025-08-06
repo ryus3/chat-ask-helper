@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Search, Printer, FileDown, QrCode, Package } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
 const QRLabelsPage = () => {
-  const { products } = useInventory();
+  const { products } = useUnifiedInventory();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProducts, setSelectedProducts] = useState(new Set());
   const [filteredProducts, setFilteredProducts] = useState([]);

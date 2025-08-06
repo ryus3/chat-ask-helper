@@ -4,7 +4,7 @@ import { FileText, Eye, Receipt, Calendar, User, DollarSign, CheckCircle } from 
 import { format, parseISO } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { ar } from 'date-fns/locale';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import OrderDetailsDialog from '@/components/orders/OrderDetailsDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,7 +12,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 const SettlementInvoiceDialog = ({ invoice, open, onOpenChange, allUsers }) => {
     const IRAQ_TIMEZONE = 'Asia/Baghdad'; // المنطقة الزمنية العراقية
-    const { orders } = useInventory();
+    const { orders } = useUnifiedInventory();
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [realOrdersData, setRealOrdersData] = useState([]);

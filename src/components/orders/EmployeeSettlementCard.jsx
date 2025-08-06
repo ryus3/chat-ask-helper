@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { DollarSign, Loader2, User, CheckCircle } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { toast } from '@/hooks/use-toast';
 
 // معرف المدير الرئيسي - يجب عدم عرض التسوية له
@@ -16,7 +16,7 @@ const EmployeeSettlementCard = ({
   onClearSelection,
   calculateProfit 
 }) => {
-  const { settleEmployeeProfits } = useInventory();
+  const { settleEmployeeProfits } = useUnifiedInventory();
   const [isSettling, setIsSettling] = useState(false);
 
   // حساب إجمالي المستحقات للطلبات المحددة

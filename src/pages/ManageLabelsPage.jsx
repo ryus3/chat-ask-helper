@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Printer } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 const ManageLabelsPage = () => {
-  const { products, loading } = useInventory();
+  const { products, loading } = useUnifiedInventory();
   const navigate = useNavigate();
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);

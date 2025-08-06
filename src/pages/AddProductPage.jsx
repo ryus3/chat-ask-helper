@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useVariants } from '@/contexts/VariantsContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +43,7 @@ const AddProductPage = () => {
   const editProductData = location.state?.editProduct; // للتحديد إذا كنا في وضع التعديل
   const isEditMode = !!editProductData;
 
-  const { addProduct, updateProduct, settings, loading: inventoryLoading, refetchProducts } = useInventory();
+  const { addProduct, updateProduct, settings, loading: inventoryLoading, refetchProducts } = useUnifiedInventory();
   const { sizes, colors: allColors, loading: variantsLoading } = useVariants();
   
   const [productInfo, setProductInfo] = useState({
