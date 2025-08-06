@@ -11,11 +11,25 @@ import { cn } from '@/lib/utils';
 
 const StockAlertsWindow = ({ open, onOpenChange }) => {
   const navigate = useNavigate();
-  const { getLowStockProducts, settings, products } = useUnifiedInventory();
+  const { settings, products } = useUnifiedInventory();
   const [selectedLevel, setSelectedLevel] = useState('all');
   
-  // استخدام المنتجات المفلترة من السياق (InventoryContext يطبق الفلترة تلقائياً)
-  const lowStockProducts = getLowStockProducts(settings?.lowStockThreshold || 5);
+  // حساب المنتجات منخفضة المخزون مباشرة من البيانات
+  const threshold = settings?.lowStockThreshold || 5;
+  const lowStockProducts = products.flatMap(product => 
+    (product.product_variants || [])
+      .filter(variant => variant.stock_quantity <= threshold)
+      .map(variant => ({
+        id: variant.id,
+        productName: product.name,
+        quantity: variant.stock_quantity,
+        lowStockThreshold: threshold,
+        size: variant.sizes?.name || 'غير محدد',
+        color: variant.colors?.name || 'غير محدد',
+        productImage: product.image_url,
+        sku: variant.sku || `${product.name}-${variant.id}`
+      }))
+  );
   
   const getStockLevel = (stock, minStock) => {
     const percentage = (stock / minStock) * 100;
