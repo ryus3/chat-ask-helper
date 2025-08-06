@@ -4,7 +4,7 @@ import { Eye, Edit, Trash2, Printer, EyeOff } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { toast } from '@/components/ui/use-toast';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import ProductDetailsDialog from './ProductDetailsDialog';
@@ -12,7 +12,7 @@ import PrintLabelsDialog from './PrintLabelsDialog';
 
 const ManageProductActions = ({ product, onProductUpdate, refetchProducts }) => {
   const navigate = useNavigate();
-  const { deleteProducts, updateProduct } = useInventory();
+  const { deleteProducts, updateProduct } = useUnifiedInventory();
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isPrintOpen, setIsPrintOpen] = useState(false);

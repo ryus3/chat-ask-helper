@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, Trash2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 
 const OrderDetailsForm = ({ 
@@ -26,7 +26,7 @@ const OrderDetailsForm = ({
   subtotal,
   total
 }) => {
-  const { cart, removeFromCart } = useInventory();
+  const { cart, removeFromCart } = useUnifiedInventory();
   const { hasPermission } = useAuth();
   
   const deliveryFee = activePartner === 'local' ? (settings?.deliveryFee || 0) : 0;

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 
 const AiChatDialog = ({ open, onOpenChange }) => {
   const [messages, setMessages] = useState([]);
@@ -20,7 +20,7 @@ const AiChatDialog = ({ open, onOpenChange }) => {
   let user, createOrder;
   try {
     const authContext = useAuth();
-    const inventoryContext = useInventory();
+    const inventoryContext = useUnifiedInventory();
     user = authContext?.user;
     createOrder = inventoryContext?.createOrder;
   } catch (error) {

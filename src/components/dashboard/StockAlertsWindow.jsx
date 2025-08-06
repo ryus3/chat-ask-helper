@@ -6,12 +6,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Package, AlertTriangle, ShieldAlert, ArrowRight, X, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { cn } from '@/lib/utils';
 
 const StockAlertsWindow = ({ open, onOpenChange }) => {
   const navigate = useNavigate();
-  const { getLowStockProducts, settings, products } = useInventory();
+  const { getLowStockProducts, settings, products } = useUnifiedInventory();
   const [selectedLevel, setSelectedLevel] = useState('all');
   
   // استخدام المنتجات المفلترة من السياق (InventoryContext يطبق الفلترة تلقائياً)

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -14,7 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const AiOrdersManager = ({ onClose }) => {
   const { user, hasPermission } = useAuth();
-  const { aiOrders, approveAiOrder, deleteOrders } = useInventory();
+  const { aiOrders, approveAiOrder, deleteOrders } = useUnifiedInventory();
   const { deleteNotificationByTypeAndData } = useNotifications();
   const [selectedOrders, setSelectedOrders] = React.useState([]);
   const [isProcessing, setIsProcessing] = React.useState(false);

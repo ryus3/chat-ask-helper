@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useFilteredProducts } from '@/hooks/useFilteredProducts';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { useVariants } from '@/contexts/VariantsContext';
@@ -138,7 +138,7 @@ const InventoryList = ({ items, onEditStock, canEdit, stockFilter, isLoading, on
 
 
 const InventoryPage = () => {
-  const { products: allProducts, orders, loading, settings, updateVariantStock } = useInventory();
+  const { products: allProducts, orders, loading, settings, updateVariantStock } = useUnifiedInventory();
   const products = useFilteredProducts(allProducts); // تطبيق فلترة الصلاحيات
   const { allUsers, user } = useAuth();
   const { hasPermission, isAdmin } = usePermissions();

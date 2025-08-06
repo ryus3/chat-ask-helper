@@ -5,7 +5,7 @@ import { Search, SlidersHorizontal, LayoutGrid, List, X } from 'lucide-react';
 import { QRButton } from '@/components/ui/qr-button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { useVariants } from '@/contexts/VariantsContext';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,7 @@ import { Slider } from '@/components/ui/slider';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 const ProductFilters = ({ filters, setFilters, categories, brands, colors, onBarcodeSearch, onAdvancedFilters, viewMode, setViewMode, onProductSelect }) => {
-  const { products } = useInventory();
+  const { products } = useUnifiedInventory();
   const { user } = useAuth();
   const { categories: allCategories, colors: allColors, sizes: allSizes, departments: allDepartments, productTypes: allProductTypes, seasonsOccasions: allSeasonsOccasions } = useVariants();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
