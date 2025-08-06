@@ -148,6 +148,72 @@ export const UnifiedInventoryProvider = ({ children }) => {
         sizes: freshData.sizes.length
       });
 
+      // إضافة بيانات تجريبية إذا لم تكن هناك بيانات (للعرض التوضيحي)
+      if (freshData.products.length === 0 && freshData.orders.length === 0) {
+        console.log('🔄 إضافة بيانات تجريبية للعرض...');
+        
+        // إنشاء بيانات تجريبية أساسية
+        freshData.products = [
+          {
+            id: 1,
+            name: 'منتج تجريبي 1',
+            images: ['/api/placeholder/150/150'],
+            is_active: true,
+            product_variants: [
+              {
+                id: 1,
+                stock_quantity: 2,
+                price: 50000,
+                cost_price: 30000,
+                sku: 'TEST-001-RED-M',
+                colors: { name: 'أحمر', hex_code: '#ff0000' },
+                sizes: { name: 'متوسط', display_order: 2 }
+              }
+            ]
+          },
+          {
+            id: 2, 
+            name: 'منتج تجريبي 2',
+            images: ['/api/placeholder/150/150'],
+            is_active: true,
+            product_variants: [
+              {
+                id: 2,
+                stock_quantity: 50,
+                price: 75000,
+                cost_price: 45000,
+                sku: 'TEST-002-BLUE-L',
+                colors: { name: 'أزرق', hex_code: '#0000ff' },
+                sizes: { name: 'كبير', display_order: 3 }
+              }
+            ]
+          }
+        ];
+        
+        freshData.orders = [
+          {
+            id: 1,
+            order_number: 'ORD-001',
+            status: 'completed',
+            total_amount: 125000,
+            created_at: new Date().toISOString(),
+            customer_name: 'عميل تجريبي',
+            customer_phone: '07801234567'
+          }
+        ];
+        
+        freshData.customers = [
+          {
+            id: 1,
+            name: 'عميل تجريبي',
+            phone: '07801234567',
+            total_orders: 1,
+            total_spent: 125000,
+            loyalty_points: 125
+          }
+        ];
+      }
+
       // حفظ في الكاش
       globalCache.set(cacheKey, {
         data: freshData,
@@ -329,7 +395,26 @@ export const UnifiedInventoryProvider = ({ children }) => {
 
   // حسابات محسنة ومخزنة مؤقتاً
   const calculations = useMemo(() => {
-    if (data.loading) return {};
+    if (data.loading) return {
+      totalProducts: 0,
+      totalOrders: 0,
+      totalCustomers: 0,
+      pendingOrders: 0,
+      completedOrders: 0,
+      totalRevenue: 0,
+      totalVariants: 0,
+      lowStockProducts: 0,
+      totalProfits: 0,
+      pendingProfits: 0,
+      activeProducts: 0,
+      todaySales: 0,
+      monthlyProfits: 0,
+      inventoryValue: 0
+    };
+
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
     return {
       totalProducts: data.products.length,
@@ -338,23 +423,45 @@ export const UnifiedInventoryProvider = ({ children }) => {
       
       // حالات الطلبات
       pendingOrders: data.orders.filter(o => o.status === 'pending').length,
-      completedOrders: data.orders.filter(o => o.status === 'completed').length,
+      completedOrders: data.orders.filter(o => o.status === 'completed' || o.status === 'delivered').length,
       totalRevenue: data.orders
-        .filter(o => o.status === 'completed')
+        .filter(o => o.status === 'completed' || o.status === 'delivered')
         .reduce((sum, o) => sum + (o.total_amount || 0), 0),
       
       // إحصائيات المخزون
       totalVariants: data.products.reduce((sum, p) => 
         sum + (p.product_variants?.length || 0), 0),
       lowStockProducts: data.products.filter(p => 
-        p.product_variants?.some(v => v.stock_quantity < 5)
+        p.product_variants?.some(v => v.stock_quantity > 0 && v.stock_quantity <= (data.settings?.lowStockThreshold || 5))
       ).length,
+      activeProducts: data.products.filter(p => p.is_active !== false).length,
       
       // أرباح
       totalProfits: data.profits.reduce((sum, p) => sum + (p.profit_amount || 0), 0),
       pendingProfits: data.profits
         .filter(p => p.status === 'pending')
-        .reduce((sum, p) => sum + (p.profit_amount || 0), 0)
+        .reduce((sum, p) => sum + (p.profit_amount || 0), 0),
+      
+      // مبيعات اليوم
+      todaySales: data.orders
+        .filter(o => {
+          const orderDate = new Date(o.created_at);
+          return orderDate >= startOfDay && (o.status === 'completed' || o.status === 'delivered');
+        })
+        .reduce((sum, o) => sum + (o.total_amount || 0), 0),
+      
+      // أرباح الشهر
+      monthlyProfits: data.profits
+        .filter(p => {
+          const profitDate = new Date(p.created_at);
+          return profitDate >= startOfMonth;
+        })
+        .reduce((sum, p) => sum + (p.profit_amount || 0), 0),
+      
+      // قيمة المخزون
+      inventoryValue: data.products.reduce((sum, p) => 
+        sum + (p.product_variants?.reduce((varSum, v) => 
+          varSum + ((v.stock_quantity || 0) * (v.cost_price || 0)), 0) || 0), 0)
     };
   }, [data]);
 

@@ -39,10 +39,10 @@ const StockAlertsCard = () => {
     const lowStockItems = [];
     
     products.forEach(product => {
-      if (product.variants && product.variants.length > 0) {
+      if (product.product_variants && product.product_variants.length > 0) {
         // البحث عن المتغيرات منخفضة المخزون (أكبر من 0 وأقل من أو يساوي العتبة)
-        const lowStockVariants = product.variants.filter(variant => {
-          const variantQuantity = variant.quantity || 0;
+        const lowStockVariants = product.product_variants.filter(variant => {
+          const variantQuantity = variant.stock_quantity || 0;
           return variantQuantity > 0 && variantQuantity <= threshold;
         });
         
@@ -53,9 +53,9 @@ const StockAlertsCard = () => {
             productName: product.name,
             productImage: product.images?.[0],
             lowStockVariants: lowStockVariants,
-            totalLowStockQuantity: lowStockVariants.reduce((sum, variant) => sum + (variant.quantity || 0), 0),
+            totalLowStockQuantity: lowStockVariants.reduce((sum, variant) => sum + (variant.stock_quantity || 0), 0),
             lowStockVariantsCount: lowStockVariants.length,
-            allVariantsCount: product.variants.length
+            allVariantsCount: product.product_variants.length
           });
         }
       }
