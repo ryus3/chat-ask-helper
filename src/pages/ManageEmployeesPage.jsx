@@ -210,6 +210,5 @@ const ManageEmployeesPage = () => {
       </>
     );
   };
-};
 
 export default ManageEmployeesPage;
