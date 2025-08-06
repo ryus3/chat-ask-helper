@@ -1,6 +1,7 @@
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import { createLogger, defineConfig } from 'vite';
+import { componentTagger } from "lovable-tagger";
 
 const configHorizonsViteErrorHandler = `
 const observer = new MutationObserver((mutations) => {
@@ -127,7 +128,7 @@ logger.error = (msg, options) => {
 };
 
 export default defineConfig(async ({ mode }) => {
-    const isDev = process.env.NODE_ENV !== 'production';
+    const isDev = mode === 'development';
     let inlineEditPlugin, editModeDevPlugin;
 
     if (isDev) {
@@ -144,10 +145,11 @@ export default defineConfig(async ({ mode }) => {
     return {
         customLogger: logger,
         plugins: [
-            ...(isDev ? [inlineEditPlugin(), editModeDevPlugin()] : []),
             react(),
+            mode === 'development' && componentTagger(),
+            ...(isDev ? [inlineEditPlugin(), editModeDevPlugin()] : []),
             addTransformIndexHtml,
-        ],
+        ].filter(Boolean),
         server: {
             host: "::",
             cors: true,
