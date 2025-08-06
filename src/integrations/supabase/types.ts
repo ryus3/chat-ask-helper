@@ -14,13 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      product_permissions: {
+        Row: {
+          can_sell: boolean | null
+          can_view: boolean | null
+          created_at: string | null
+          id: string
+          product_id: string
+          user_id: string | null
+        }
+        Insert: {
+          can_sell?: boolean | null
+          can_view?: boolean | null
+          created_at?: string | null
+          id?: string
+          product_id: string
+          user_id?: string | null
+        }
+        Update: {
+          can_sell?: boolean | null
+          can_view?: boolean | null
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          employee_code: string | null
+          employee_id: number | null
+          full_name: string
+          id: string
+          is_active: boolean | null
+          role: string
+          telegram_code: string | null
+          updated_at: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          employee_code?: string | null
+          employee_id?: number | null
+          full_name: string
+          id: string
+          is_active?: boolean | null
+          role?: string
+          telegram_code?: string | null
+          updated_at?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          employee_code?: string | null
+          employee_id?: number | null
+          full_name?: string
+          id?: string
+          is_active?: boolean | null
+          role?: string
+          telegram_code?: string | null
+          updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      user_permissions: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_granted: boolean | null
+          permission_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_granted?: boolean | null
+          permission_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_granted?: boolean | null
+          permission_type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_permissions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_by_username: {
+        Args: { username_input: string }
+        Returns: {
+          user_id: string
+          email: string
+          full_name: string
+          role: string
+        }[]
+      }
+      user_has_permission: {
+        Args: { user_uuid: string; permission_name: string }
+        Returns: boolean
+      }
+      username_exists: {
+        Args: { username_input: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
