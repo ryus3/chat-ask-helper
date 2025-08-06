@@ -15,4 +15,5 @@ if ! command -v npx vite &> /dev/null; then
 fi
 
 echo "✅ تشغيل التطبيق..."
+export PATH="./node_modules/.bin:$PATH"
 npx vite --host 0.0.0.0 --port 8080
