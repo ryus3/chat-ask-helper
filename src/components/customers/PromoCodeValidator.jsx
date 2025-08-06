@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, CheckCircle, Copy } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
 const PromoCodeValidator = ({ onPromoCodeApplied }) => {

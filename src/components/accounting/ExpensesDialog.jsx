@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react';
     import { toast } from '@/hooks/use-toast';
     import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
     import { DateRangePicker } from '@/components/ui/date-range-picker';
-    import { supabase } from '@/lib/customSupabaseClient';
+    import { supabase } from '@/integrations/supabase/client';
     
     const ExpensesDialog = ({ open, onOpenChange, expenses, addExpense, deleteExpense }) => {
       const [newExpense, setNewExpense] = useState({

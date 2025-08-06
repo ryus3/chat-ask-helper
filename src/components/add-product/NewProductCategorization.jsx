@@ -9,7 +9,7 @@ import { ChevronsUpDown, PlusCircle, Check, Building2 } from 'lucide-react';
 import AddEditCategoryDialog from '@/components/manage-variants/AddEditCategoryDialog';
 import AddEditDepartmentDialog from '@/components/manage-variants/AddEditDepartmentDialog';
 import { cn } from "@/lib/utils";
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const CreatableCategorySelect = ({ categoryType, value, onChange, categories, onCategoryCreated }) => {
   const [open, setOpen] = useState(false);

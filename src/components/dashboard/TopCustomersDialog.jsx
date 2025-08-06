@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Users, Calendar, Eye, TrendingUp, DollarSign, Phone } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const TopCustomersDialog = ({ open, onOpenChange, employeeId = null }) => {
   const [loading, setLoading] = useState(false);

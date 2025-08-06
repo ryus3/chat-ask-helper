@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { MapPin, Calendar, Eye, TrendingUp, DollarSign, Map } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const TopProvincesDialog = ({ open, onOpenChange, employeeId = null }) => {
   const [loading, setLoading] = useState(false);

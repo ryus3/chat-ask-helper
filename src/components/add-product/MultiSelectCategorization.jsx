@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList } from '@/components/ui/command';
 import { Check, ChevronDown, Tag, Package, Calendar, Building2, Plus } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import AddEditDepartmentDialog from '@/components/manage-variants/AddEditDepartmentDialog';

@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { toast } from '@/components/ui/use-toast';
 import { useInventory } from '@/contexts/InventoryContext';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import ProductDetailsDialog from './ProductDetailsDialog';
 import PrintLabelsDialog from './PrintLabelsDialog';
 

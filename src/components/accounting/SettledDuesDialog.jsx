@@ -13,7 +13,7 @@ const IRAQ_TIMEZONE = 'Asia/Baghdad';
 import { ar } from 'date-fns/locale';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { CheckCircle, FileText, Calendar, User, DollarSign, Receipt, Eye, TrendingUp, Banknote, Clock, Star, Award } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 // مكون معاينة الفاتورة
 const InvoicePreviewDialog = ({ invoice, open, onOpenChange, settledProfits, allOrders }) => {

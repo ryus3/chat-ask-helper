@@ -25,7 +25,7 @@ import {
   Activity,
   Target
 } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const TopProvincesDialog = ({ trigger, isOpen, onOpenChange }) => {
   const [loading, setLoading] = useState(false);

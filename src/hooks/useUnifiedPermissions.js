@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useUnifiedPermissions = (passedUser) => {
   // تعريف الـ state أولاً

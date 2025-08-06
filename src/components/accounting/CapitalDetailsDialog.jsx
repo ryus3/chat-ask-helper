@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Wallet, Package, Banknote, Edit, Save, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('ar-IQ', {

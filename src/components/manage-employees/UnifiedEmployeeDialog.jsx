@@ -10,7 +10,7 @@ import { Shield, Package, User, Settings, Eye } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import UnifiedRoleManager from './UnifiedRoleManager';
 import ProductPermissionsManager from './ProductPermissionsManager';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const UnifiedEmployeeDialog = ({ employee, open, onOpenChange }) => {
   const { refetchAdminData } = useAuth();

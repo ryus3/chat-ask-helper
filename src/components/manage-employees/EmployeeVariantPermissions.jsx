@@ -4,7 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useVariants } from '@/contexts/VariantsContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { Package, Palette, Ruler, Grid3X3, Tag, Calendar } from 'lucide-react';
 

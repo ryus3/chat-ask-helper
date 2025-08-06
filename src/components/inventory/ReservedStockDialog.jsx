@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import usePermissions from '@/hooks/usePermissions';
 import { useInventory } from '@/contexts/InventoryContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 
 

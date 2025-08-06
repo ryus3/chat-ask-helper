@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { useVariants } from '@/contexts/VariantsContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Users, Settings, Shield, Copy, Eye, EyeOff, 
   Crown, UserCheck, UserX, AlertCircle, 

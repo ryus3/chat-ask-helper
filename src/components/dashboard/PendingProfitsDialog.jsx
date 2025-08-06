@@ -8,7 +8,7 @@ import { PackageCheck, DollarSign, Calendar, User, MapPin, Phone } from 'lucide-
 import { format, parseISO } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { toast } from '@/components/ui/use-toast';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const PendingProfitsDialog = ({ 
   open, 

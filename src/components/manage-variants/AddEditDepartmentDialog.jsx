@@ -12,7 +12,7 @@ import {
   Heart, Dumbbell, Book, Music, Camera, Scissors, Wrench,
   HardHat, Paintbrush, Laptop, Smartphone, Headphones
 } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 
 const AddEditDepartmentDialog = ({ isOpen, onClose, department, onSuccess }) => {

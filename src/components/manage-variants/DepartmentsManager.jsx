@@ -9,7 +9,7 @@ import {
   Heart, Dumbbell, Book, Music, Camera, Scissors, Wrench,
   HardHat, Paintbrush, Laptop, Smartphone, Headphones, Settings
 } from 'lucide-react';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import AddEditDepartmentDialog from './AddEditDepartmentDialog';
 
