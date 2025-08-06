@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -22,7 +22,7 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { useFilteredProducts } from '@/hooks/useFilteredProducts';
 
 const ManageProductsPage = () => {
-  const { products, deleteProducts, loading, refetchProducts } = useInventory();
+  const { products, deleteProducts, loading, refetchProducts } = useUnifiedInventory();
   const { user } = useAuth();
   const { hasPermission, isAdmin } = usePermissions();
   const navigate = useNavigate();
