@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Package, Sparkles, TrendingUp, Plus, Tags, Palette, Ruler, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { Helmet } from 'react-helmet-async';
 import { Progress } from '@/components/ui/progress';
 import { toast } from '@/components/ui/use-toast';

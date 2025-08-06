@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSupabase } from '@/contexts/SupabaseContext';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { toast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useProductsDB = () => {
   const [products, setProducts] = useState([]);

@@ -2,7 +2,7 @@
  * مكتبة ترحيل وتحديث الباركود للمنتجات الموجودة
  */
 
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { generateUniqueBarcode, validateBarcode } from '@/lib/barcode-utils';
 
 /**

@@ -27,7 +27,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Checkbox } from '@/components/ui/checkbox';
 import InventoryItem from '@/components/inventory/InventoryItem';
 import { generateInventoryReportPDF } from '@/utils/pdfGenerator';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const InventoryList = ({ items, onEditStock, canEdit, stockFilter, isLoading, onSelectionChange, selectedItems, isMobile }) => {
   if (isLoading) {
@@ -236,7 +236,7 @@ const InventoryPage = () => {
 
   const fetchDepartmentsData = async () => {
     try {
-      const { supabase } = await import('@/lib/customSupabaseClient');
+      const { supabase } = await import('@/integrations/supabase/client');
       
       // جلب الأقسام الرئيسية
       const { data: deptData, error: deptError } = await supabase

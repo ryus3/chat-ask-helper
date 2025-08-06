@@ -3,7 +3,7 @@
  * System Optimizer & Health Checker
  */
 
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 class SystemOptimizer {
   constructor() {
