@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      notifications: {
+        Row: {
+          auto_delete: boolean | null
+          created_at: string
+          data: Json | null
+          id: string
+          is_read: boolean
+          message: string
+          title: string
+          type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          auto_delete?: boolean | null
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_read?: boolean
+          message: string
+          title: string
+          type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          auto_delete?: boolean | null
+          created_at?: string
+          data?: Json | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       product_permissions: {
         Row: {
           can_sell: boolean | null
