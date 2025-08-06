@@ -7,8 +7,9 @@ import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 
-import { UserPlus, TrendingUp, DollarSign, PackageCheck, ShoppingCart, Users, Package, MapPin, User as UserIcon, Bot, Briefcase, TrendingDown, Hourglass, CheckCircle } from 'lucide-react';
+import { UserPlus, TrendingUp, DollarSign, PackageCheck, ShoppingCart, Users, Package, MapPin, User as UserIcon, Bot, Briefcase, TrendingDown, Hourglass, CheckCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import Loader from '@/components/ui/loader';
 import { filterOrdersByPeriod, getTopCustomers, getTopProducts, getTopProvinces } from '@/lib/dashboard-helpers';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
@@ -16,7 +17,8 @@ import SettlementRequestCard from '@/components/dashboard/SettlementRequestCard'
 import StockAlertsCard from '@/components/dashboard/StockAlertsCard';
 import StockMonitoringSystem from '@/components/dashboard/StockMonitoringSystem';
 import RecentOrdersCard from '@/components/dashboard/RecentOrdersCard';
-import UnifiedStatsCards from '@/components/shared/UnifiedStatsCards';
+import ManagerDashboardSection from '@/components/dashboard/ManagerDashboardSection';
+import StatCard from '@/components/dashboard/StatCard';
 import TopListCard from '@/components/dashboard/TopListCard';
 import TopProvincesDialog from '@/components/dashboard/TopProvincesDialog';
 import TopProductsDialog from '@/components/dashboard/TopProductsDialog';
@@ -97,12 +99,49 @@ const Dashboard = () => {
             {/* تنبيه المخزون في الأعلى */}
             <StockMonitoringSystem />
 
-            {/* الإحصائيات الموحدة */}
-            <UnifiedStatsCards 
-                showCards={canViewAllData ? ['revenue', 'orders', 'products', 'profits'] : ['orders', 'products', 'lowStock']}
-                layout="grid"
-                variant="default"
-            />
+            {/* الإحصائيات الجميلة للمديرين */}
+            {canViewAllData ? (
+                <ManagerDashboardSection 
+                    stats={{
+                        totalOrders: dashboardStats.totalOrders || 0,
+                        totalRevenue: dashboardStats.totalRevenue || 0,
+                        totalProducts: dashboardStats.totalProducts || 0,
+                        pendingOrders: dashboardStats.pendingOrders || 0,
+                        completedOrders: dashboardStats.periodCompleted || 0,
+                        lowStockProducts: dashboardStats.lowStockProducts || 0,
+                        pendingProfits: dashboardStats.totalProfits || 0,
+                        aiOrdersCount: allOrders?.filter(o => o.is_ai_order)?.length || 0
+                    }}
+                    orders={allOrders}
+                    profits={allProfits}
+                    products={allProducts}
+                />
+            ) : (
+                /* إحصائيات مبسطة للموظفين */
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <StatCard
+                        title="طلباتي"
+                        value={filteredOrders.length}
+                        format="number"
+                        icon={ShoppingCart}
+                        colors={['blue-500', 'sky-500']}
+                    />
+                    <StatCard
+                        title="إجمالي المنتجات"
+                        value={dashboardStats.totalProducts}
+                        format="number"
+                        icon={Package}
+                        colors={['purple-500', 'violet-500']}
+                    />
+                    <StatCard
+                        title="تنبيهات المخزون"
+                        value={dashboardStats.lowStockProducts}
+                        format="number"
+                        icon={AlertTriangle}
+                        colors={['red-500', 'orange-500']}
+                    />
+                </div>
+            )}
 
             {/* كارت طلب المحاسبة للموظفين فقط */}
             {!canViewAllData && (
@@ -119,16 +158,34 @@ const Dashboard = () => {
                     
                     {/* إدارة طلبات الذكاء الاصطناعي - للمديرين فقط */}
                     {canViewAllData && (
-                        <div className="space-y-4">
-                            <Button 
-                                variant="outline" 
-                                onClick={() => setShowAiOrders(true)}
-                                className="w-full"
-                            >
-                                <Bot className="w-4 h-4 mr-2" />
-                                إدارة طلبات الذكاء الاصطناعي
-                            </Button>
-                        </div>
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="space-y-4"
+                        >
+                            <Card className="overflow-hidden border-2 border-gradient-to-r from-purple-200 to-blue-200 bg-gradient-to-br from-purple-50 to-blue-50 hover:shadow-xl transition-all duration-300">
+                                <CardContent className="p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+                                                <Bot className="w-6 h-6 text-white" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-lg">طلبات الذكاء الاصطناعي</h3>
+                                                <p className="text-sm text-muted-foreground">إدارة ومراجعة الطلبات الذكية</p>
+                                            </div>
+                                        </div>
+                                        <Button 
+                                            onClick={() => setShowAiOrders(true)}
+                                            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                                        >
+                                            إدارة الطلبات
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
                     )}
                 </div>
 
@@ -138,14 +195,33 @@ const Dashboard = () => {
                     
                     {/* طلبات التسجيل الجديدة - للمديرين فقط */}
                     {canViewAllData && (
-                        <Button 
-                            variant="outline" 
-                            onClick={() => setShowPendingRegs(true)}
-                            className="w-full"
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
                         >
-                            <UserPlus className="w-4 h-4 mr-2" />
-                            طلبات التسجيل الجديدة
-                        </Button>
+                            <Card className="overflow-hidden border-2 border-gradient-to-r from-green-200 to-emerald-200 bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-xl transition-all duration-300">
+                                <CardContent className="p-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+                                                <UserPlus className="w-6 h-6 text-white" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-lg">طلبات التسجيل</h3>
+                                                <p className="text-sm text-muted-foreground">موافقة على الموظفين الجدد</p>
+                                            </div>
+                                        </div>
+                                        <Button 
+                                            onClick={() => setShowPendingRegs(true)}
+                                            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                                        >
+                                            عرض الطلبات
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
                     )}
                 </div>
             </div>
