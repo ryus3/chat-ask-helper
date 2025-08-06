@@ -8,10 +8,10 @@ import { useMemo } from 'react';
  * يضمن أن جميع الصفحات تستخدم نفس البيانات
  */
 const useUnifiedData = () => {
-  // الحصول على البيانات من المصادر الموحدة
-  const globalData = useGlobalData();
-  const authContext = useAuth();
-  const permissionsContext = usePermissions();
+  // الحصول على البيانات من المصادر الموحدة بحماية من الأخطاء
+  const globalData = useGlobalData() || {};
+  const authContext = useAuth() || {};
+  const permissionsContext = usePermissions() || {};
 
   // استخراج البيانات الأساسية
   const { 
@@ -33,10 +33,10 @@ const useUnifiedData = () => {
     addOrder = () => {},
     updateCustomer = () => {},
     addCustomer = () => {}
-  } = globalData || {};
+  } = globalData;
 
-  const { user, profile } = authContext || {};
-  const { hasPermission, isAdmin, canViewAllData } = permissionsContext || {};
+  const { user, profile } = authContext;
+  const { hasPermission, isAdmin, canViewAllData } = permissionsContext;
 
   // فلترة البيانات حسب الصلاحيات
   const filteredData = useMemo(() => {
