@@ -3,11 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { X, Loader2 } from 'lucide-react';
 import { QuickOrderContent } from '@/components/quick-order/QuickOrderContent';
-import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
+import { useCart } from '@/hooks/useCart';
 
 const QuickOrderDialog = ({ open, onOpenChange, onOrderCreated }) => {
   const formRef = useRef(null);
-  const { cart } = useUnifiedInventory();
+  const { cart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleTriggerSubmit = () => {
@@ -58,7 +58,7 @@ const QuickOrderDialog = ({ open, onOpenChange, onOrderCreated }) => {
 
           <DialogFooter className="mt-auto pt-4 border-t flex-col-reverse sm:flex-row sm:justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}><X className="w-4 h-4 ml-2" />إلغاء</Button>
-            <Button type="button" onClick={handleTriggerSubmit} disabled={isSubmitting || cart.length === 0}>
+            <Button type="button" onClick={handleTriggerSubmit} disabled={isSubmitting || !cart || cart.length === 0}>
               {isSubmitting && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               تأكيد الطلب
             </Button>
