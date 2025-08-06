@@ -1,72 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { useNotifications } from '@/contexts/NotificationsContext';
+import { supabase } from '@/integrations/supabase/client';
 import { User, UserCheck, UserX, Settings, X } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import UnifiedEmployeePermissionsDialog from '../manage-employees/UnifiedEmployeePermissionsDialog';
 
-const UserCard = ({ user, onApprove, onReject, onDetailedReview }) => {
-  // نستخدم toast مباشرة
-
+const UserCard = ({ user, onApprove, onReject }) => {
   const handleDirectApprove = async () => {
     try {
-      // صلاحيات أساسية محسنة للموظف الجديد
-      const defaultPermissions = [
-        // صفحات التطبيق الأساسية
-        'view_dashboard',
-        'view_products_page', 
-        'view_orders_page',
-        'view_inventory_page',
-        'view_quick_order_page',
-        
-        // المنتجات والمخزن
-        'view_products',
-        'view_inventory',
-        'use_barcode_scanner',
-        
-        // الطلبات والمبيعات
-        'view_orders',
-        'view_own_orders',
-        'create_orders',
-        'quick_order',
-        'checkout_orders',
-        'view_order_details',
-        'print_invoices',
-        'print_receipts',
-        
-        // لوحة التحكم
-        'view_statistics',
-        'view_recent_activities',
-        
-        // الأرباح الخاصة
-        'view_own_profits',
-        
-        // إعدادات شخصية
-        'profile_settings'
-      ];
-      
-      const approvalData = {
-        status: 'active',
-        permissions: JSON.stringify(defaultPermissions),
+      // تفعيل المستخدم مع صلاحيات أساسية
+      await onApprove(user.id, {
+        is_active: true,
         role: 'employee'
-      };
-      
-      console.log('=== DIRECT APPROVAL START ===');
-      console.log('Target user:', user);
-      console.log('User ID being approved:', user.user_id);
-      console.log('Approval data being sent:', approvalData);
-      
-      await onApprove(user.user_id, approvalData);
+      });
     } catch (error) {
-      console.error('Direct approval error:', error);
+      console.error('خطأ في الموافقة المباشرة:', error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء الموافقة المباشرة",
+        description: "حدث خطأ أثناء الموافقة",
         variant: "destructive"
       });
     }
@@ -74,10 +28,9 @@ const UserCard = ({ user, onApprove, onReject, onDetailedReview }) => {
 
   const handleDirectReject = async () => {
     try {
-      console.log('Direct rejection for user:', user.user_id);
-      await onReject(user.user_id);
+      await onReject(user.id);
     } catch (error) {
-      console.error('Direct rejection error:', error);
+      console.error('خطأ في الرفض المباشر:', error);
       toast({
         title: "خطأ", 
         description: "حدث خطأ أثناء الرفض",
@@ -106,12 +59,13 @@ const UserCard = ({ user, onApprove, onReject, onDetailedReview }) => {
                 <div className="flex items-center gap-2">
                   <h3 className="font-medium text-sm">{user.full_name}</h3>
                   <Badge variant="secondary" className="text-xs">
-                    {user.role}
+                    {user.role === 'admin' ? 'مدير' : 'موظف'}
                   </Badge>
                 </div>
                 <div className="text-xs text-muted-foreground space-y-1">
                   <p>المستخدم: {user.username}</p>
                   <p>الإيميل: {user.email}</p>
+                  <p>رقم الموظف: {user.employee_id}</p>
                 </div>
               </div>
             </div>
@@ -119,20 +73,11 @@ const UserCard = ({ user, onApprove, onReject, onDetailedReview }) => {
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
-                variant="outline"
-                onClick={() => onDetailedReview(user)}
-                className="text-xs"
-              >
-                <Settings className="w-3 h-3 ml-1" />
-                مراجعة تفصيلية
-              </Button>
-              <Button
-                size="sm"
                 onClick={handleDirectApprove}
                 className="text-xs bg-green-600 hover:bg-green-700"
               >
                 <UserCheck className="w-3 h-3 ml-1" />
-                موافقة سريعة
+                موافقة
               </Button>
               <Button
                 size="sm"
@@ -152,100 +97,90 @@ const UserCard = ({ user, onApprove, onReject, onDetailedReview }) => {
 };
 
 const PendingRegistrations = ({ onClose }) => {
-  const { pendingRegistrations, updateUser, refetchAdminData } = useAuth();
-  const { addNotification } = useNotifications();
-  // نستخدم toast مباشرة
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [showUnifiedDialog, setShowUnifiedDialog] = useState(false);
+  const [pendingUsers, setPendingUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  console.log('PendingRegistrations rendered with:', pendingRegistrations);
+  // جلب طلبات التسجيل المعلقة
+  const fetchPendingUsers = async () => {
+    try {
+      setLoading(true);
+      const { data: users, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('is_active', false)
+        .eq('role', 'employee')
+        .order('created_at', { ascending: false });
 
-  const handleDetailedReview = (user) => {
-    console.log('Opening detailed review for:', user);
-    setSelectedEmployee(user);
-    setShowUnifiedDialog(true);
+      if (error) throw error;
+
+      setPendingUsers(users || []);
+    } catch (error) {
+      console.error('خطأ في جلب طلبات التسجيل:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحميل طلبات التسجيل",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchPendingUsers();
+  }, []);
 
   const handleApprove = async (userId, data) => {
     if (isProcessing) return;
     setIsProcessing(true);
     
     try {
-      console.log('=== APPROVAL PROCESS START ===');
-      console.log('User ID:', userId);
-      console.log('Approval data:', data);
+      console.log('=== بدء عملية الموافقة ===');
+      console.log('معرف المستخدم:', userId);
+      console.log('بيانات الموافقة:', data);
       
-      // إضافة الصلاحيات الأساسية المحسنة إذا لم تكن موجودة
-      const defaultPermissions = [
-        // صفحات التطبيق الأساسية
-        'view_dashboard',
-        'view_products_page', 
-        'view_orders_page',
-        'view_inventory_page',
-        'view_quick_order_page',
-        
-        // المنتجات والمخزن
-        'view_products',
-        'view_inventory',
-        'use_barcode_scanner',
-        
-        // الطلبات والمبيعات
+      // تحديث حالة المستخدم في قاعدة البيانات
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          is_active: true,
+          role: data.role || 'employee'
+        })
+        .eq('id', userId);
+
+      if (updateError) throw updateError;
+
+      // إضافة الصلاحيات الأساسية
+      const basicPermissions = [
+        'view_all_data',
+        'manage_products', 
         'view_orders',
-        'view_own_orders',
-        'create_orders',
-        'quick_order',
-        'checkout_orders',
-        'view_order_details',
-        'print_invoices',
-        'print_receipts',
-        
-        // لوحة التحكم
-        'view_statistics',
-        'view_recent_activities',
-        
-        // الأرباح الخاصة
-        'view_own_profits',
-        
-        // إعدادات شخصية
-        'profile_settings'
+        'create_orders'
       ];
-      
-      const finalData = {
-        status: 'active',
-        permissions: JSON.stringify(data?.permissions || defaultPermissions),
-        role: data?.role || 'employee',
-        ...data
-      };
-      
-      console.log('Final approval data:', finalData);
-      
-      const result = await updateUser(userId, finalData);
-      console.log('Update result:', result);
-      
-      if (result?.success !== false) {
-        console.log('Approval successful');
-        
-        toast({
-          title: "تمت الموافقة ✅",
-          description: "تم تفعيل حساب الموظف بنجاح",
-          variant: "default"
-        });
-        
-        // تحديث فوري للقوائم
-        console.log('Refreshing admin data...');
-        await refetchAdminData();
-        
-        // إغلاق النوافذ
-        setShowUnifiedDialog(false);
-        setSelectedEmployee(null);
-        
-        console.log('=== APPROVAL PROCESS SUCCESS ===');
-      } else {
-        throw new Error(result?.error?.message || 'خطأ في الموافقة');
+
+      for (const permission of basicPermissions) {
+        await supabase
+          .from('user_permissions')
+          .insert({
+            user_id: userId,
+            permission_type: permission,
+            is_granted: true
+          });
       }
+      
+      toast({
+        title: "تمت الموافقة ✅",
+        description: "تم تفعيل حساب الموظف بنجاح",
+        variant: "default"
+      });
+      
+      // إعادة تحميل القائمة
+      await fetchPendingUsers();
+      
+      console.log('=== نجحت عملية الموافقة ===');
     } catch (error) {
-      console.error('=== APPROVAL PROCESS ERROR ===', error);
+      console.error('=== فشلت عملية الموافقة ===', error);
       toast({
         title: "خطأ في الموافقة",
         description: error.message || "حدث خطأ أثناء الموافقة على الحساب",
@@ -261,39 +196,29 @@ const PendingRegistrations = ({ onClose }) => {
     setIsProcessing(true);
     
     try {
-      console.log('=== REJECTION PROCESS START ===');
-      console.log('Rejecting user:', userId);
+      console.log('=== بدء عملية الرفض ===');
+      console.log('رفض المستخدم:', userId);
       
-      const result = await updateUser(userId, { 
-        status: 'rejected', 
-        permissions: JSON.stringify([]) 
+      // حذف المستخدم من قاعدة البيانات
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+      
+      if (error) throw error;
+      
+      toast({
+        title: "تم الرفض ❌",
+        description: "تم رفض طلب التسجيل",
+        variant: "default"
       });
       
-      console.log('Rejection result:', result);
+      // إعادة تحميل القائمة
+      await fetchPendingUsers();
       
-      if (result?.success !== false) {
-        console.log('Rejection successful');
-        
-        toast({
-          title: "تم الرفض ❌",
-          description: "تم رفض طلب التسجيل",
-          variant: "default"
-        });
-        
-        // تحديث فوري للقوائم
-        console.log('Refreshing admin data...');
-        await refetchAdminData();
-        
-        // إغلاق النوافذ
-        setShowUnifiedDialog(false);
-        setSelectedEmployee(null);
-        
-        console.log('=== REJECTION PROCESS SUCCESS ===');
-      } else {
-        throw new Error(result?.error?.message || 'خطأ في الرفض');
-      }
+      console.log('=== نجحت عملية الرفض ===');
     } catch (error) {
-      console.error('=== REJECTION PROCESS ERROR ===', error);
+      console.error('=== فشلت عملية الرفض ===', error);
       toast({
         title: "خطأ في الرفض",
         description: error.message || "حدث خطأ أثناء رفض الطلب",
@@ -304,7 +229,31 @@ const PendingRegistrations = ({ onClose }) => {
     }
   };
 
-  if (!pendingRegistrations?.length) {
+  if (loading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          onClick={(e) => e.stopPropagation()}
+          className="bg-background rounded-lg shadow-xl max-w-md w-full"
+        >
+          <Card className="border-0">
+            <CardContent className="text-center py-8">
+              <p className="text-muted-foreground">جاري تحميل طلبات التسجيل...</p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
+    );
+  }
+
+  if (!pendingUsers?.length) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -359,7 +308,7 @@ const PendingRegistrations = ({ onClose }) => {
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-medium">
-                طلبات التسجيل الجديدة ({pendingRegistrations.length})
+                طلبات التسجيل الجديدة ({pendingUsers.length})
               </CardTitle>
               <Button
                 variant="ghost"
@@ -373,28 +322,18 @@ const PendingRegistrations = ({ onClose }) => {
           </CardHeader>
           <CardContent className="space-y-4 max-h-[60vh] overflow-y-auto">
             <AnimatePresence>
-              {pendingRegistrations.map(user => (
+              {pendingUsers.map(user => (
                 <UserCard
-                  key={user.id || user.user_id}
+                  key={user.id}
                   user={user}
                   onApprove={handleApprove}
                   onReject={handleReject}
-                  onDetailedReview={handleDetailedReview}
                 />
               ))}
             </AnimatePresence>
           </CardContent>
         </Card>
       </motion.div>
-      
-      {selectedEmployee && (
-        <UnifiedEmployeePermissionsDialog
-          employee={selectedEmployee}
-          open={showUnifiedDialog}
-          onOpenChange={setShowUnifiedDialog}
-          onSave={handleApprove}
-        />
-      )}
     </motion.div>
   );
 };
