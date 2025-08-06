@@ -49,6 +49,7 @@ export const UnifiedInventoryProvider = ({ children }) => {
     }
 
     try {
+      console.log('🔄 بدء جلب البيانات الموحدة...');
       setData(prev => ({ ...prev, loading: true, error: null }));
 
       // جلب شامل ومحسن - استعلام واحد فقط
@@ -78,7 +79,7 @@ export const UnifiedInventoryProvider = ({ children }) => {
             colors(name, hex_code),
             sizes(name, display_order)
           )
-        `).eq('is_active', true),
+        `),
         supabase.from('customers').select('*').order('created_at', { ascending: false }),
         supabase.from('orders').select(`
           *,
@@ -97,7 +98,7 @@ export const UnifiedInventoryProvider = ({ children }) => {
           *,
           orders(order_number, qr_id),
           profiles(full_name)
-        `),
+        `).order('created_at', { ascending: false }),
         supabase.from('settings').select('*')
       ]);
 
@@ -136,6 +137,16 @@ export const UnifiedInventoryProvider = ({ children }) => {
         error: null,
         lastUpdated: new Date()
       };
+
+      console.log('✅ تم جلب البيانات بنجاح:', {
+        products: freshData.products.length,
+        orders: freshData.orders.length,
+        customers: freshData.customers.length,
+        departments: freshData.departments.length,
+        categories: freshData.categories.length,
+        colors: freshData.colors.length,
+        sizes: freshData.sizes.length
+      });
 
       // حفظ في الكاش
       globalCache.set(cacheKey, {
