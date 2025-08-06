@@ -32,7 +32,7 @@ const SettlementInvoiceDialog = ({ invoice, open, onOpenChange, allUsers }) => {
         }
 
         try {
-            const { supabase } = await import('@/lib/customSupabaseClient');
+            const { supabase } = await import('@/integrations/supabase/client');
             
             const { data, error } = await supabase
                 .from('settlement_invoices')
@@ -63,7 +63,7 @@ const SettlementInvoiceDialog = ({ invoice, open, onOpenChange, allUsers }) => {
 
         setLoadingOrders(true);
         try {
-            const { supabase } = await import('@/lib/customSupabaseClient');
+            const { supabase } = await import('@/integrations/supabase/client');
             
             const { data, error } = await supabase
                 .from('orders')

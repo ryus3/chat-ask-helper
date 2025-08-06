@@ -12,7 +12,7 @@ import {
   Plus, Trash2, Edit, Shield, User, Link, Unlink, RefreshCw
 } from 'lucide-react';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import usePermissionBasedData from '@/hooks/usePermissionBasedData';
 
 const TelegramManagementDialog = ({ open, onOpenChange }) => {

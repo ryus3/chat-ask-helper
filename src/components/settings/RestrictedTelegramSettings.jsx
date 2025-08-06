@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle, Shield, User, Plus, Trash2, Copy } from 'lucide-react';
 import usePermissionBasedData from '@/hooks/usePermissionBasedData';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { useState, useEffect } from 'react';
 

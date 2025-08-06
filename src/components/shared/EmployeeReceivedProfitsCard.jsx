@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import StatCard from '@/components/dashboard/StatCard';
 import { Receipt } from 'lucide-react';
 import EmployeeReceivedProfitsDialog from './EmployeeReceivedProfitsDialog';

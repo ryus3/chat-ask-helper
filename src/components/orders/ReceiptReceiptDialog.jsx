@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Receipt, Loader2, Package } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { supabase } from '@/lib/customSupabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 
 const ReceiptReceiptDialog = ({ open, onClose, orders, onSuccess, user }) => {
   const [isProcessing, setIsProcessing] = useState(false);
