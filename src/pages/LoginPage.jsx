@@ -11,7 +11,7 @@ import { ThemeSwitcher } from '@/components/ThemeSwitcher.jsx';
 
 const LoginPage = () => {
   const [view, setView] = useState('login'); // 'login', 'register', 'forgot'
-  const { login, registerWithEmail, forgotPassword, loading, user } = useAuth();
+  const { login, register, logout, loading, user } = useAuth();
   const navigate = useNavigate();
 
   // إذا كان المستخدم مسجل دخول بالفعل، توجيهه إلى الصفحة الرئيسية
@@ -60,9 +60,15 @@ const LoginPage = () => {
         return;
     }
     
-    const result = await registerWithEmail(fullName, username, email, password);
+    const result = await register(username, fullName, email, password);
     if (result.success) {
       setView('login');
+    } else {
+      toast({ 
+        title: "خطأ في التسجيل", 
+        description: result.error, 
+        variant: "destructive" 
+      });
     }
   };
 
@@ -74,7 +80,8 @@ const LoginPage = () => {
       toast({ title: "خطأ", description: "الرجاء إدخال البريد الإلكتروني.", variant: "destructive" });
       return;
     }
-    await forgotPassword(email);
+    // TODO: تنفيذ استعادة كلمة المرور
+    toast({ title: "قريباً", description: "هذه الميزة ستكون متاحة قريباً.", variant: "default" });
   };
 
   const inputClass = "bg-background/80 dark:bg-zinc-800/50 border-2 border-border focus:border-primary focus:ring-0 h-12 text-base transition-colors placeholder:text-muted-foreground/80 text-foreground";
