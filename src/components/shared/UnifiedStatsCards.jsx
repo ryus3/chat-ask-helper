@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
+import { usePermissions } from '@/hooks/usePermissions';
 
 /**
  * مكون موحد لعرض الإحصائيات في جميع الصفحات
@@ -25,6 +26,7 @@ const UnifiedStatsCards = ({
   variant = 'default'
 }) => {
   const { calculations, loading: isLoading } = useUnifiedInventory();
+  const { hasPermission, canViewAllData } = usePermissions();
 
   if (isLoading) {
     return (
@@ -52,7 +54,7 @@ const UnifiedStatsCards = ({
       subtitle: `اليوم: ${formatCurrency(calculations.todaySales)}`,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
-      show: permissions.canViewAllData || permissions.hasPermission('view_financial_data')
+      show: canViewAllData || hasPermission('view_financial_data')
     },
     orders: {
       title: 'إجمالي الطلبات',
@@ -82,7 +84,7 @@ const UnifiedStatsCards = ({
       subtitle: `هذا الشهر: ${formatCurrency(calculations.monthlyProfits)}`,
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50',
-      show: permissions.canViewAllData || permissions.hasPermission('view_profits')
+      show: canViewAllData || hasPermission('view_profits')
     },
     inventory: {
       title: 'قيمة المخزون',
@@ -92,7 +94,7 @@ const UnifiedStatsCards = ({
       subtitle: `منخفض: ${calculations.lowStockProducts}`,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
-      show: permissions.hasPermission('view_inventory')
+      show: hasPermission('view_inventory')
     },
     lowStock: {
       title: 'تنبيهات المخزون',
@@ -102,7 +104,7 @@ const UnifiedStatsCards = ({
       subtitle: 'منتجات منخفضة',
       color: 'text-red-600',
       bgColor: 'bg-red-50',
-      show: true
+      show: hasPermission('view_inventory')
     }
   };
 
