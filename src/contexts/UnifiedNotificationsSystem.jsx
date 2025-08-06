@@ -96,4 +96,14 @@ const UnifiedNotificationsSystem = () => {
   return null;
 };
 
+// مزود الإشعارات الموحد
+export const UnifiedNotificationsProvider = ({ children }) => {
+  return (
+    <>
+      <UnifiedNotificationsSystem />
+      {children}
+    </>
+  );
+};
+
 export default UnifiedNotificationsSystem;
