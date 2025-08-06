@@ -17,7 +17,8 @@ export const useNotifications = () => {
 
 export const NotificationsProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
-    const { user } = useAuth();
+    const authContext = useAuth();
+    const user = authContext?.user;
   
     // Cache management for data optimization
     const [lastFetch, setLastFetch] = useState(0);

@@ -5,7 +5,8 @@ import { useAuth } from '@/contexts/UnifiedAuthContext';
  * يستخدم النظام الجديد الموحد فقط
  */
 export const usePermissions = () => {
-  const { user, profile, loading, hasPermission, isAdmin } = useAuth();
+  const authContext = useAuth();
+  const { user, profile, loading, hasPermission, isAdmin } = authContext || {};
 
   return {
     // المستخدم

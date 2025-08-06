@@ -39,8 +39,10 @@ const AdvancedProfitsAnalysisPage = lazy(() => import('@/pages/AdvancedProfitsAn
 const CustomersManagementPage = lazy(() => import('@/pages/CustomersManagementPage.jsx'));
 
 function ProtectedRoute({ children, permission }) {
-  const { user, loading } = useAuth();
-  const { hasPermission, loading: permissionsLoading } = usePermissions();
+  const authContext = useAuth();
+  const { user, loading } = authContext || {};
+  const permissionsContext = usePermissions();
+  const { hasPermission, loading: permissionsLoading } = permissionsContext || {};
   
   // انتظار تحميل البيانات الأساسية أولاً
   if (loading) {
@@ -83,8 +85,10 @@ function ScrollToTop() {
 }
 
 function AppContent() {
-  const { user, loading } = useAuth();
-  const { aiChatOpen, setAiChatOpen } = useAiChat();
+  const authContext = useAuth();
+  const { user, loading } = authContext || {};
+  const aiChatContext = useAiChat();
+  const { aiChatOpen, setAiChatOpen } = aiChatContext || {};
 
   if (loading) {
     return <div className="h-screen w-screen flex items-center justify-center bg-background"><Loader /></div>;
