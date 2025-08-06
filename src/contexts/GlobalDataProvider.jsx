@@ -1,261 +1,213 @@
-import React, { createContext, useContext, useMemo } from 'react';
-import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/UnifiedAuthContext';
+import { useAuth } from './UnifiedAuthContext';
 
-// إنشاء Query Client مع إعدادات محسنة
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 دقائق
-      cacheTime: 10 * 60 * 1000, // 10 دقائق
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      retry: 1,
-    },
-  },
-});
+// Context للبيانات الموحدة
+const GlobalDataContext = createContext(null);
 
-// Context للوصول للبيانات الموحدة
-const GlobalDataContext = createContext();
-
-// دالة موحدة لجلب البيانات من Supabase
-const fetchSupabaseData = async (table, options = {}) => {
-  let query = supabase.from(table).select(options.select || '*');
-  
-  if (options.orderBy) {
-    query = query.order(options.orderBy.column, { ascending: options.orderBy.ascending ?? true });
-  }
-  
-  if (options.filters) {
-    options.filters.forEach(filter => {
-      query = query.filter(filter.column, filter.operator, filter.value);
-    });
-  }
-  
-  const { data, error } = await query;
-  if (error) throw error;
-  return data || [];
-};
-
-// Hook موحد لجميع البيانات
+// Hook للوصول للبيانات الموحدة
 export const useGlobalData = () => {
   const context = useContext(GlobalDataContext);
   if (!context) {
-    throw new Error('useGlobalData must be used within GlobalDataProvider');
+    return {
+      products: [],
+      orders: [],
+      customers: [],
+      categories: [],
+      colors: [],
+      sizes: [],
+      departments: [],
+      loading: false,
+      error: null,
+      refreshData: () => {},
+      calculations: {
+        totalRevenue: 0,
+        totalOrders: 0,
+        totalProducts: 0,
+        totalCustomers: 0
+      }
+    };
   }
   return context;
 };
 
-// Hooks محددة لكل نوع بيانات
-export const useProductsData = () => {
-  return useQuery({
-    queryKey: ['products'],
-    queryFn: () => fetchSupabaseData('products', {
-      select: '*',
-      orderBy: { column: 'created_at', ascending: false }
-    }),
-  });
-};
+// Provider مبسط وفعال
+export const GlobalDataProvider = ({ children }) => {
+  // الحالات الأساسية
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-export const useOrdersData = () => {
-  return useQuery({
-    queryKey: ['orders'],
-    queryFn: () => fetchSupabaseData('orders', {
-      select: '*',
-      orderBy: { column: 'created_at', ascending: false }
-    }),
-  });
-};
-
-export const useInventoryData = () => {
-  return useQuery({
-    queryKey: ['inventory'],
-    queryFn: () => fetchSupabaseData('inventory'),
-  });
-};
-
-export const usePurchasesData = () => {
-  return useQuery({
-    queryKey: ['purchases'],
-    queryFn: () => fetchSupabaseData('purchases', {
-      orderBy: { column: 'created_at', ascending: false }
-    }),
-  });
-};
-
-export const useVariantsData = () => {
-  const categories = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => fetchSupabaseData('categories'),
-  });
-  
-  const colors = useQuery({
-    queryKey: ['colors'],
-    queryFn: () => fetchSupabaseData('colors'),
-  });
-  
-  const sizes = useQuery({
-    queryKey: ['sizes'],
-    queryFn: () => fetchSupabaseData('sizes'),
-  });
-  
-  const departments = useQuery({
-    queryKey: ['departments'],
-    queryFn: () => fetchSupabaseData('departments'),
-  });
-
-  return {
-    categories: categories.data || [],
-    colors: colors.data || [],
-    sizes: sizes.data || [],
-    departments: departments.data || [],
-    isLoading: categories.isLoading || colors.isLoading || sizes.isLoading || departments.isLoading,
-    error: categories.error || colors.error || sizes.error || departments.error
-  };
-};
-
-export const useProfitsData = () => {
-  return useQuery({
-    queryKey: ['profits'],
-    queryFn: () => fetchSupabaseData('profits'),
-  });
-};
-
-export const useExpensesData = () => {
-  return useQuery({
-    queryKey: ['expenses'],
-    queryFn: () => fetchSupabaseData('expenses', {
-      orderBy: { column: 'transaction_date', ascending: false }
-    }),
-  });
-};
-
-export const useCustomersData = () => {
-  return useQuery({
-    queryKey: ['customers'],
-    queryFn: () => fetchSupabaseData('customers'),
-  });
-};
-
-export const useCashSourcesData = () => {
-  return useQuery({
-    queryKey: ['cash_sources'],
-    queryFn: () => fetchSupabaseData('cash_sources'),
-  });
-};
-
-// Provider Component مبسط لحل مشاكل التحميل
-const GlobalDataProviderCore = ({ children }) => {
   const authContext = useAuth();
   const user = authContext?.user;
-  
-  // بيانات أساسية فقط للبداية
-  const products = [];
-  const orders = [];
-  const customers = [];
-  const loading = false;
-  const error = null;
 
-  // دالات للتحديث والإضافة
-  const invalidateQueries = (queryKeys) => {
-    queryKeys.forEach(key => {
-      queryClient.invalidateQueries({ queryKey: [key] });
-    });
-  };
+  // دالة جلب البيانات الموحدة
+  const fetchAllData = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
 
-  const updateCache = (queryKey, updateFn) => {
-    queryClient.setQueryData([queryKey], updateFn);
-  };
+      // جلب جميع البيانات بطلبات متوازية
+      const [
+        productsRes,
+        ordersRes,
+        customersRes,
+        categoriesRes,
+        colorsRes,
+        sizesRes,
+        departmentsRes
+      ] = await Promise.allSettled([
+        supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false }),
+        supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(200),
+        supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(500),
+        supabase.from('categories').select('*').order('name'),
+        supabase.from('colors').select('*').order('name'),
+        supabase.from('sizes').select('*').order('name'),
+        supabase.from('departments').select('*').order('name')
+      ]);
 
-  // الحسابات الموحدة
-  const calculations = {
-    // حساب إجمالي الإيرادات
-    getTotalRevenue: () => {
-      if (!orders.data) return 0;
-      return orders.data
-        .filter(o => o.status === 'delivered' || o.status === 'completed')
-        .reduce((sum, o) => sum + (o.final_amount || 0), 0);
-    },
-    
-    // حساب إجمالي الأرباح
-    getTotalProfits: () => {
-      if (!profits.data) return 0;
-      return profits.data
-        .filter(p => p.status === 'completed')
-        .reduce((sum, p) => sum + (p.total_profit || 0), 0);
-    },
-    
-    // حساب قيمة المخزون
-    getInventoryValue: () => {
-      if (!products.data) return 0;
-      return products.data.reduce((sum, product) => {
-        return sum + (product.variants || []).reduce((variantSum, variant) => {
-          return variantSum + ((variant.quantity || 0) * (variant.cost_price || 0));
-        }, 0);
-      }, 0);
-    },
-    
-    // عدد المنتجات النشطة
-    getActiveProductsCount: () => {
-      if (!products.data) return 0;
-      return products.data.filter(p => p.is_active).length;
-    },
-    
-    // عدد الطلبات المعلقة
-    getPendingOrdersCount: () => {
-      if (!orders.data) return 0;
-      return orders.data.filter(o => o.status === 'pending').length;
+      // معالجة النتائج
+      if (productsRes.status === 'fulfilled' && productsRes.value.data) {
+        setProducts(productsRes.value.data);
+      }
+      if (ordersRes.status === 'fulfilled' && ordersRes.value.data) {
+        setOrders(ordersRes.value.data);
+      }
+      if (customersRes.status === 'fulfilled' && customersRes.value.data) {
+        setCustomers(customersRes.value.data);
+      }
+      if (categoriesRes.status === 'fulfilled' && categoriesRes.value.data) {
+        setCategories(categoriesRes.value.data);
+      }
+      if (colorsRes.status === 'fulfilled' && colorsRes.value.data) {
+        setColors(colorsRes.value.data);
+      }
+      if (sizesRes.status === 'fulfilled' && sizesRes.value.data) {
+        setSizes(sizesRes.value.data);
+      }
+      if (departmentsRes.status === 'fulfilled' && departmentsRes.value.data) {
+        setDepartments(departmentsRes.value.data);
+      }
+
+    } catch (err) {
+      console.error('خطأ في جلب البيانات:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
+  }, [user]);
+
+  // جلب البيانات عند تحميل المكون
+  useEffect(() => {
+    if (user) {
+      fetchAllData();
+    }
+  }, [user, fetchAllData]);
+
+  // حسابات موحدة
+  const calculations = {
+    totalRevenue: orders
+      .filter(o => o.status === 'completed' || o.status === 'delivered')
+      .reduce((sum, o) => sum + (o.final_amount || 0), 0),
+    
+    totalOrders: orders.length,
+    completedOrders: orders.filter(o => o.status === 'completed' || o.status === 'delivered').length,
+    pendingOrders: orders.filter(o => o.status === 'pending').length,
+    
+    totalProducts: products.length,
+    activeProducts: products.filter(p => p.is_active !== false).length,
+    lowStockProducts: products.filter(p => (p.quantity || 0) < (p.min_stock || 5)).length,
+    
+    totalCustomers: customers.length,
+    
+    // معدلات الأداء
+    averageOrderValue: orders.length > 0 
+      ? orders.reduce((sum, o) => sum + (o.final_amount || 0), 0) / orders.length 
+      : 0,
+    
+    // إحصائيات شهرية
+    monthlyRevenue: orders
+      .filter(o => {
+        const orderDate = new Date(o.created_at);
+        const now = new Date();
+        return orderDate.getMonth() === now.getMonth() && 
+               orderDate.getFullYear() === now.getFullYear();
+      })
+      .reduce((sum, o) => sum + (o.final_amount || 0), 0)
   };
 
+  // دالات التحديث
+  const updateProduct = useCallback((productId, updates) => {
+    setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...updates } : p));
+  }, []);
+
+  const addProduct = useCallback((newProduct) => {
+    setProducts(prev => [newProduct, ...prev]);
+  }, []);
+
+  const updateOrder = useCallback((orderId, updates) => {
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updates } : o));
+  }, []);
+
+  const addOrder = useCallback((newOrder) => {
+    setOrders(prev => [newOrder, ...prev]);
+  }, []);
+
+  const updateCustomer = useCallback((customerId, updates) => {
+    setCustomers(prev => prev.map(c => c.id === customerId ? { ...c, ...updates } : c));
+  }, []);
+
+  const addCustomer = useCallback((newCustomer) => {
+    setCustomers(prev => [newCustomer, ...prev]);
+  }, []);
+
+  // القيمة المُمررة للـ Context
   const contextValue = {
-    // البيانات
-    products: products.data || [],
-    orders: orders.data || [],
-    inventory: inventory.data || [],
-    purchases: purchases.data || [],
-    variants,
-    profits: profits.data || [],
-    expenses: expenses.data || [],
-    customers: customers.data || [],
-    cashSources: cashSources.data || [],
+    // البيانات الأساسية
+    products,
+    orders,
+    customers,
+    categories,
+    colors,
+    sizes,
+    departments,
     
-    // حالة التحميل
-    isLoading: products.isLoading || orders.isLoading || inventory.isLoading || 
-              purchases.isLoading || variants.isLoading || profits.isLoading || 
-              expenses.isLoading || customers.isLoading || cashSources.isLoading,
-    
-    // الأخطاء
-    error: products.error || orders.error || inventory.error || 
-           purchases.error || variants.error || profits.error || 
-           expenses.error || customers.error || cashSources.error,
-    
-    // دالات التحديث
-    invalidateQueries,
-    updateCache,
+    // حالة التحميل والأخطاء
+    loading,
+    error,
     
     // الحسابات الموحدة
     calculations,
     
-    // Query Client للعمليات المتقدمة
-    queryClient
+    // دالات التحديث
+    refreshData: fetchAllData,
+    updateProduct,
+    addProduct,
+    updateOrder,
+    addOrder,
+    updateCustomer,
+    addCustomer,
+    
+    // معلومات إضافية
+    lastUpdate: new Date().toISOString(),
+    dataStatus: {
+      products: products.length,
+      orders: orders.length,
+      customers: customers.length
+    }
   };
 
   return (
     <GlobalDataContext.Provider value={contextValue}>
       {children}
     </GlobalDataContext.Provider>
-  );
-};
-
-// المكون الرئيسي
-export const GlobalDataProvider = ({ children }) => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <GlobalDataProviderCore>
-        {children}
-      </GlobalDataProviderCore>
-    </QueryClientProvider>
   );
 };

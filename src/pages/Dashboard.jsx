@@ -26,17 +26,21 @@ import PendingRegistrations from '@/components/dashboard/PendingRegistrations';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
-    const { hasPermission, canViewAllData } = usePermissions();
+    const authContext = useAuth();
+    const user = authContext?.user;
+    const permissionsContext = usePermissions();
+    const { hasPermission, canViewAllData } = permissionsContext || {};
     
-    // استخدام البيانات الموحدة بدلاً من contexts منفصلة
+    // استخدام النظام الموحد الجديد
     const {
         products,
         orders,
+        customers,
         calculations,
         permissions,
         isLoading,
-        operations
+        operations,
+        error
     } = useUnifiedData();
 
     const [selectedPeriod, setSelectedPeriod] = useLocalStorage('dashboard-period', 'all');
