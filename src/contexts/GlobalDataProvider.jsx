@@ -13,6 +13,7 @@ export const useGlobalData = () => {
       products: [],
       orders: [],
       customers: [],
+      inventory: [],
       categories: [],
       colors: [],
       sizes: [],
@@ -37,6 +38,7 @@ export const GlobalDataProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [inventory, setInventory] = useState([]);
   const [categories, setCategories] = useState([]);
   const [colors, setColors] = useState([]);
   const [sizes, setSizes] = useState([]);
@@ -60,6 +62,7 @@ export const GlobalDataProvider = ({ children }) => {
         productsRes,
         ordersRes,
         customersRes,
+        inventoryRes,
         categoriesRes,
         colorsRes,
         sizesRes,
@@ -68,6 +71,7 @@ export const GlobalDataProvider = ({ children }) => {
         supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false }),
         supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(200),
         supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(500),
+        supabase.from('inventory').select('*').order('updated_at', { ascending: false }),
         supabase.from('categories').select('*').order('name'),
         supabase.from('colors').select('*').order('name'),
         supabase.from('sizes').select('*').order('name'),
@@ -83,6 +87,9 @@ export const GlobalDataProvider = ({ children }) => {
       }
       if (customersRes.status === 'fulfilled' && customersRes.value.data) {
         setCustomers(customersRes.value.data);
+      }
+      if (inventoryRes.status === 'fulfilled' && inventoryRes.value.data) {
+        setInventory(inventoryRes.value.data);
       }
       if (categoriesRes.status === 'fulfilled' && categoriesRes.value.data) {
         setCategories(categoriesRes.value.data);
@@ -175,6 +182,7 @@ export const GlobalDataProvider = ({ children }) => {
     products,
     orders,
     customers,
+    inventory,
     categories,
     colors,
     sizes,
@@ -201,7 +209,8 @@ export const GlobalDataProvider = ({ children }) => {
     dataStatus: {
       products: products.length,
       orders: orders.length,
-      customers: customers.length
+      customers: customers.length,
+      inventory: inventory.length
     }
   };
 

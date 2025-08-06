@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import SimpleApp from './SimpleApp.jsx';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App.jsx';
+import { AppProviders } from './contexts/Providers.jsx';
 import './index.css';
+import './print.css';
+import 'react-day-picker/dist/style.css';
 
-// تشغيل بسيط للنظام بدون تعقيدات
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <SimpleApp />
+    <AppProviders>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AppProviders>
   </React.StrictMode>
 );

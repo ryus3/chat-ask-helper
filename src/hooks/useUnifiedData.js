@@ -18,6 +18,7 @@ const useUnifiedData = () => {
     products = [], 
     orders = [], 
     customers = [],
+    inventory = [],
     categories = [],
     colors = [],
     sizes = [],
@@ -194,6 +195,7 @@ const useUnifiedData = () => {
     customers: filteredData.customers,
     
     // البيانات الثابتة (متاحة للجميع)
+    inventory,
     categories,
     colors,
     sizes,
