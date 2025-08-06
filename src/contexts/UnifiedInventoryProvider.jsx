@@ -31,6 +31,7 @@ export const UnifiedInventoryProvider = ({ children }) => {
     customers: [],
     orders: [],
     profits: [],
+    settings: {},
     loading: true,
     error: null,
     lastUpdated: null
@@ -59,7 +60,8 @@ export const UnifiedInventoryProvider = ({ children }) => {
         productsResult,
         customersResult,
         ordersResult,
-        profitsResult
+        profitsResult,
+        settingsResult
       ] = await Promise.all([
         supabase.from('departments').select('*').order('display_order'),
         supabase.from('categories').select(`
@@ -95,7 +97,8 @@ export const UnifiedInventoryProvider = ({ children }) => {
           *,
           orders(order_number, qr_id),
           profiles(full_name)
-        `)
+        `),
+        supabase.from('settings').select('*')
       ]);
 
       // التحقق من الأخطاء
@@ -107,14 +110,15 @@ export const UnifiedInventoryProvider = ({ children }) => {
         productsResult.error,
         customersResult.error,
         ordersResult.error,
-        profitsResult.error
+        profitsResult.error,
+        settingsResult.error
       ].filter(Boolean);
 
       if (errors.length > 0) {
         throw new Error(`فشل في جلب البيانات: ${errors[0].message}`);
       }
 
-      // تجهيز البيانات المحسنة
+      // تجهيز البيانات المحسنة  
       const freshData = {
         departments: departmentsResult.data || [],
         categories: categoriesResult.data || [],
@@ -124,6 +128,10 @@ export const UnifiedInventoryProvider = ({ children }) => {
         customers: customersResult.data || [],
         orders: ordersResult.data || [],
         profits: profitsResult.data || [],
+        settings: (settingsResult.data || []).reduce((acc, setting) => {
+          acc[setting.key] = setting.value;
+          return acc;
+        }, {}),
         loading: false,
         error: null,
         lastUpdated: new Date()
@@ -268,6 +276,46 @@ export const UnifiedInventoryProvider = ({ children }) => {
     }
   }, []);
 
+  // تحديث الإعدادات
+  const updateSettings = useCallback(async (newSettings) => {
+    try {
+      // حفظ الإعدادات في قاعدة البيانات
+      const settingsArray = Object.entries(newSettings).map(([key, value]) => ({
+        key,
+        value
+      }));
+
+      for (const setting of settingsArray) {
+        await supabase
+          .from('settings')
+          .upsert(setting, { onConflict: 'key' });
+      }
+
+      // تحديث في الكاش المحلي
+      setData(prev => ({
+        ...prev,
+        settings: { ...prev.settings, ...newSettings }
+      }));
+
+      // تنظيف الكاش العالمي
+      globalCache.delete('complete_inventory');
+
+      toast({
+        title: "تم الحفظ",
+        description: "تم حفظ الإعدادات بنجاح"
+      });
+
+      return true;
+    } catch (error) {
+      toast({
+        title: "خطأ في الحفظ",
+        description: error.message,
+        variant: "destructive"
+      });
+      return false;
+    }
+  }, []);
+
   // حسابات محسنة ومخزنة مؤقتاً
   const calculations = useMemo(() => {
     if (data.loading) return {};
@@ -338,6 +386,7 @@ export const UnifiedInventoryProvider = ({ children }) => {
     updateProduct,
     updateOrder,
     addProduct,
+    updateSettings,
     
     // حالة النظام
     isReady: !data.loading && !data.error,

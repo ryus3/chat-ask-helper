@@ -11,7 +11,7 @@ import DefaultProductImage from '@/components/ui/default-product-image';
 
 const StockAlertsCard = () => {
   const navigate = useNavigate();
-  const { products, refreshData } = useUnifiedInventory(); // المنتجات المفلترة تلقائياً
+  const { products, settings, refreshData } = useUnifiedInventory(); // المنتجات المفلترة تلقائياً
   const { canManageFinances, isAdmin } = usePermissions();
   const [alertsWindowOpen, setAlertsWindowOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
