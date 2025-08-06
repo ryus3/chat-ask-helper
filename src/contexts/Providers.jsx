@@ -1,26 +1,23 @@
 import React from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext.jsx';
-import { SupabaseProvider } from '@/contexts/SupabaseContext.jsx';
 import { UnifiedAuthProvider } from '@/contexts/UnifiedAuthContext.jsx';
-import { GlobalDataProvider } from '@/contexts/GlobalDataProvider.jsx';
+import { UnifiedInventoryProvider } from '@/contexts/UnifiedInventoryProvider.jsx';
+import { UnifiedNotificationsProvider } from '@/contexts/UnifiedNotificationsSystem.jsx';
 import { AiChatProvider } from '@/contexts/AiChatContext.jsx';
-import { NotificationsProvider } from '@/contexts/NotificationsContext.jsx';
 
-// نظام إشعارات موحد ومحسن للأداء
+// 🎯 نظام موحد ومحسن - مصدر واحد للحقيقة
 export const AppProviders = ({ children }) => {
   return (
     <ThemeProvider>
-      <SupabaseProvider>
-        <UnifiedAuthProvider>
-          <GlobalDataProvider>
-            <NotificationsProvider>
-              <AiChatProvider>
-                {children}
-              </AiChatProvider>
-            </NotificationsProvider>
-          </GlobalDataProvider>
-        </UnifiedAuthProvider>
-      </SupabaseProvider>
+      <UnifiedAuthProvider>
+        <UnifiedInventoryProvider>
+          <UnifiedNotificationsProvider>
+            <AiChatProvider>
+              {children}
+            </AiChatProvider>
+          </UnifiedNotificationsProvider>
+        </UnifiedInventoryProvider>
+      </UnifiedAuthProvider>
     </ThemeProvider>
   );
 };
