@@ -1,4 +1,3 @@
-import { useUnifiedPermissions } from './useUnifiedPermissions';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 
 /**
@@ -6,37 +5,46 @@ import { useAuth } from '@/contexts/UnifiedAuthContext';
  * يستخدم النظام الجديد الموحد فقط
  */
 export const usePermissions = () => {
-  const { user } = useAuth();
-  const permissions = useUnifiedPermissions();
+  const { user, profile, loading, hasPermission, isAdmin } = useAuth();
 
   return {
     // المستخدم
     user,
-    loading: permissions.loading,
+    profile,
+    loading,
 
     // الأدوار
-    isAdmin: permissions.isAdmin,
-    isDepartmentManager: permissions.isDepartmentManager,
-    isSalesEmployee: permissions.isSalesEmployee,
-    isWarehouseEmployee: permissions.isWarehouseEmployee,
-    isCashier: permissions.isCashier,
-    hasRole: permissions.hasRole,
+    isAdmin,
+    isDepartmentManager: profile?.role === 'department_manager',
+    isSalesEmployee: profile?.role === 'sales_employee',
+    isWarehouseEmployee: profile?.role === 'warehouse_employee',
+    isCashier: profile?.role === 'cashier',
+    hasRole: (role) => profile?.role === role,
 
     // الصلاحيات
-    hasPermission: permissions.hasPermission,
-    canViewAllData: permissions.canViewAllData,
-    canManageEmployees: permissions.canManageEmployees,
-    canManageFinances: permissions.canManageFinances,
+    hasPermission,
+    canViewAllData: isAdmin,
+    canManageEmployees: isAdmin,
+    canManageFinances: isAdmin,
 
     // فلترة البيانات
-    filterDataByUser: permissions.filterDataByUser,
-    filterProductsByPermissions: permissions.filterProductsByPermissions,
-    getEmployeeStats: permissions.getEmployeeStats,
+    filterDataByUser: (data) => {
+      if (isAdmin) return data;
+      return data.filter(item => item.user_id === user?.id);
+    },
+    filterProductsByPermissions: (products) => {
+      if (isAdmin) return products;
+      // يمكن إضافة منطق فلترة المنتجات هنا
+      return products;
+    },
+    getEmployeeStats: () => {
+      return { total: 0, personal: 0 };
+    },
 
     // معلومات إضافية
-    userRoles: permissions.userRoles,
-    userPermissions: permissions.userPermissions,
-    productPermissions: permissions.productPermissions,
+    userRoles: profile?.role ? [profile.role] : [],
+    userPermissions: [],
+    productPermissions: {},
   };
 };
 
