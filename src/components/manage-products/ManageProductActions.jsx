@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import ProductDetailsDialog from './ProductDetailsDialog';
 import PrintLabelsDialog from './PrintLabelsDialog';
 
-const ManageProductActions = ({ product, onProductUpdate, refetchProducts }) => {
+const ManageProductActions = ({ product, onProductUpdate }) => {
   const navigate = useNavigate();
   const { deleteProducts, updateProduct } = useUnifiedInventory();
   const [isViewOpen, setIsViewOpen] = useState(false);

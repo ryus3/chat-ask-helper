@@ -7,7 +7,7 @@ import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-const ManageProductListItem = ({ product, isSelected, onSelect, onProductUpdate, refetchProducts }) => {
+const ManageProductListItem = ({ product, isSelected, onSelect, onProductUpdate }) => {
   const navigate = useNavigate();
   const { settings } = useUnifiedInventory();
 
@@ -94,7 +94,7 @@ const ManageProductListItem = ({ product, isSelected, onSelect, onProductUpdate,
         </div>
         
         <div className="flex-shrink-0">
-          <ManageProductActions product={product} onProductUpdate={onProductUpdate} refetchProducts={refetchProducts} />
+          <ManageProductActions product={product} onProductUpdate={onProductUpdate} />
         </div>
       </div>
     </motion.div>

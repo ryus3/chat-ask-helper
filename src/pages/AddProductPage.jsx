@@ -43,7 +43,7 @@ const AddProductPage = () => {
   const editProductData = location.state?.editProduct; // للتحديد إذا كنا في وضع التعديل
   const isEditMode = !!editProductData;
 
-  const { addProduct, updateProduct, settings, loading: inventoryLoading, refetchProducts } = useUnifiedInventory();
+  const { addProduct, updateProduct, loading: inventoryLoading, refreshData } = useUnifiedInventory();
   const { sizes, colors: allColors, loading: variantsLoading } = useVariants();
   
   const [productInfo, setProductInfo] = useState({

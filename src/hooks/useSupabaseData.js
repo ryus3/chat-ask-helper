@@ -107,7 +107,8 @@ export const useCustomers = () => useSupabaseData('customers');
 export const useSupabaseOrders = () => useSupabaseData('orders');
 export const usePurchases = () => useSupabaseData('purchases');
 
-// Hook for inventory with special operations
+// Hook for inventory with special operations - DEPRECATED
+// Use useUnifiedInventory instead
 export const useInventory = () => {
   const baseHook = useSupabaseData('inventory');
   const { db } = useSupabase();

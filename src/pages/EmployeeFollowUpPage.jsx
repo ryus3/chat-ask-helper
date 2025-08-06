@@ -609,7 +609,7 @@ const EmployeeFollowUpPage = () => {
         title: "تم الاستلام", 
         description: `تم استلام ${selectedOrders.length} طلبات راجعة في المخزن وأرشفتها.` 
       });
-      await refetchProducts();
+      await refreshData();
       setSelectedOrders([]);
     } catch (error) {
       console.error('خطأ في استلام الطلبات الراجعة:', error);
@@ -644,7 +644,7 @@ const EmployeeFollowUpPage = () => {
         title: "تم الحذف", 
         description: `تم حذف الطلب ${order.order_number} وإرجاع المخزون المحجوز.` 
       });
-      await refetchProducts();
+      await refreshData();
     } catch (error) {
       console.error('خطأ في حذف الطلب:', error);
       toast({ 

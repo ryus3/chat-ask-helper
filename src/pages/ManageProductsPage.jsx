@@ -22,7 +22,7 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { useFilteredProducts } from '@/hooks/useFilteredProducts';
 
 const ManageProductsPage = () => {
-  const { products, deleteProducts, loading, refetchProducts } = useUnifiedInventory();
+  const { products, deleteProducts, loading, refreshData } = useUnifiedInventory();
   const { user } = useAuth();
   const { hasPermission, isAdmin } = usePermissions();
   const navigate = useNavigate();
@@ -103,8 +103,8 @@ const ManageProductsPage = () => {
   }, []);
 
   const onProductUpdate = useCallback(() => {
-    refetchProducts();
-  }, [refetchProducts]);
+    refreshData();
+  }, [refreshData]);
 
   const handleScanSuccess = useCallback((decodedText) => {
     setIsScannerOpen(false);
@@ -211,7 +211,7 @@ const ManageProductsPage = () => {
                      isSelected={selectedProductIds.includes(product.id)} 
                      onSelect={handleSelectProduct}
                      onProductUpdate={onProductUpdate}
-                     refetchProducts={refetchProducts}
+                     refetchProducts={refreshData}
                    />
                 </motion.div>
               ))}
