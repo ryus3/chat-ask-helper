@@ -1,7 +1,7 @@
+import React, { useMemo } from 'react';
 import { useGlobalData } from '@/contexts/GlobalDataProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
-import { useMemo } from 'react';
 
 /**
  * Hook موحد وبسيط للوصول لجميع البيانات والحسابات والصلاحيات
