@@ -153,17 +153,18 @@ export const useUnifiedPermissions = (passedUser) => {
     return isAdmin || hasPermission('manage_finances');
   }, [isAdmin, hasPermission]);
 
-  // فلترة البيانات حسب المستخدم
+  // فلترة البيانات حسب المستخدم (استخدام المعرف الرقمي الأساسي)
   const filterDataByUser = useMemo(() => {
     return (data, userIdField = 'created_by') => {
       if (!data) return [];
       if (canViewAllData) return data;
       return data.filter(item => {
         const itemUserId = item[userIdField];
-        return itemUserId === user?.user_id || itemUserId === user?.id;
+        // استخدام المعرف الرقمي الأساسي أولاً، ثم UUID كاحتياط
+        return itemUserId === user?.employee_id || itemUserId === user?.user_id || itemUserId === user?.id;
       });
     };
-  }, [canViewAllData, user?.user_id, user?.id]);
+  }, [canViewAllData, user?.employee_id, user?.user_id, user?.id]);
 
   // فلترة المنتجات حسب الصلاحيات - محسن للأداء
   const filterProductsByPermissions = useMemo(() => {
@@ -199,19 +200,19 @@ export const useUnifiedPermissions = (passedUser) => {
     };
   }, [isAdmin, productPermissions]);
 
-  // إحصائيات الموظف
+  // إحصائيات الموظف (استخدام المعرف الرقمي الأساسي)
   const getEmployeeStats = useMemo(() => {
     return (data) => {
       if (!data) return { total: 0, personal: 0 };
       
       const total = data.length;
       const personal = data.filter(item => 
-        item.created_by === user?.user_id || item.created_by === user?.id
+        item.created_by === user?.employee_id || item.created_by === user?.user_id || item.created_by === user?.id
       ).length;
       
       return { total, personal };
     };
-  }, [user?.user_id, user?.id]);
+  }, [user?.employee_id, user?.user_id, user?.id]);
 
   // إذا لم يكن لدينا سياق صحيح، نعيد قيم افتراضية آمنة
   if (!hasValidContext) {
