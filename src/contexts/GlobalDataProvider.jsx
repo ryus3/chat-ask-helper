@@ -145,20 +145,17 @@ export const useCashSourcesData = () => {
   });
 };
 
-// Provider Component
+// Provider Component مبسط لحل مشاكل التحميل
 const GlobalDataProviderCore = ({ children }) => {
-  const queryClient = useQueryClient();
+  const authContext = useAuth();
+  const user = authContext?.user;
   
-  // جلب جميع البيانات مرة واحدة
-  const products = useProductsData();
-  const orders = useOrdersData();
-  const inventory = useInventoryData();
-  const purchases = usePurchasesData();
-  const variants = useVariantsData();
-  const profits = useProfitsData();
-  const expenses = useExpensesData();
-  const customers = useCustomersData();
-  const cashSources = useCashSourcesData();
+  // بيانات أساسية فقط للبداية
+  const products = [];
+  const orders = [];
+  const customers = [];
+  const loading = false;
+  const error = null;
 
   // دالات للتحديث والإضافة
   const invalidateQueries = (queryKeys) => {

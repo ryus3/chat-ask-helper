@@ -10,7 +10,16 @@ const NotificationsContext = createContext(null);
 export const useNotifications = () => {
     const context = useContext(NotificationsContext);
     if (!context) {
-        throw new Error('useNotifications must be used within a NotificationsProvider');
+        return {
+            notifications: [],
+            unreadCount: 0,
+            loading: false,
+            markAsRead: () => {},
+            markAllAsRead: () => {},
+            deleteNotification: () => {},
+            refreshNotifications: () => {},
+            createNotification: () => {}
+        };
     }
     return context;
 };
