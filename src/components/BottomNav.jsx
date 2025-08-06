@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Bot, Home, Search, Menu, User, Settings, Package, DollarSign } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import CartDialog from '@/components/orders/CartDialog';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
@@ -116,7 +116,7 @@ const MenuContent = ({ onClose }) => {
 const SearchSheet = ({ children, open, onOpenChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
-  const { products } = useInventory(); // المنتجات مفلترة تلقائياً حسب الصلاحيات
+  const { products } = useUnifiedInventory(); // المنتجات مفلترة تلقائياً حسب الصلاحيات
   const navigate = useNavigate();
 
   const filteredProducts = React.useMemo(() => {
@@ -300,7 +300,7 @@ const SearchSheet = ({ children, open, onOpenChange }) => {
 };
 
 const BottomNav = () => {
-  const { cart } = useInventory();
+  const { cart } = useUnifiedInventory();
   const { user } = useAuth();
   const { setAiChatOpen, canUseAiChat } = useAiChat();
   const navigate = useNavigate();

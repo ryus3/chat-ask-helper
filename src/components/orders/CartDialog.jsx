@@ -6,14 +6,14 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { ShoppingCart, Trash2, Tag, PackagePlus } from 'lucide-react';
 import { QRButton } from '@/components/ui/qr-button';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { toast } from '@/components/ui/use-toast';
 import BarcodeScannerDialog from '@/components/products/BarcodeScannerDialog';
 import ProductSelectionDialog from '@/components/products/ProductSelectionDialog';
 
 const CartDialog = ({ open, onOpenChange, onCheckout }) => {
-  const { products, cart, addToCart, removeFromCart, updateCartItemQuantity, clearCart, settings } = useInventory();
+  const { products, cart, addToCart, removeFromCart, updateCartItemQuantity, clearCart, settings } = useUnifiedInventory();
   const { hasPermission } = useAuth();
   const [discount, setDiscount] = useState(0);
   const [isScannerOpen, setIsScannerOpen] = useState(false);

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 
 const FloatingCartButton = ({ onOpenCart }) => {
-  const { cart } = useInventory();
+  const { cart } = useUnifiedInventory();
   const [itemCount, setItemCount] = useState(0);
 
   useEffect(() => {

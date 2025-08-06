@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ShoppingCart, Plus, Minus, Zap } from 'lucide-react';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { useVariants } from '@/contexts/VariantsContext';
@@ -14,7 +14,7 @@ const ProductVariantDialog = ({ product, open, onClose, onCreateOrder }) => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const { settings, addToCart } = useInventory();
+  const { settings, addToCart } = useUnifiedInventory();
   const { hasPermission } = useAuth();
   const { colors: allColors } = useVariants();
 

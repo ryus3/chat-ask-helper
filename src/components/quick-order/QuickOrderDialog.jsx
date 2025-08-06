@@ -3,11 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { X, Loader2 } from 'lucide-react';
 import { QuickOrderContent } from '@/components/quick-order/QuickOrderContent';
-import { useInventory } from '@/contexts/InventoryContext';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 
 const QuickOrderDialog = ({ open, onOpenChange, onOrderCreated }) => {
   const formRef = useRef(null);
-  const { cart } = useInventory();
+  const { cart } = useUnifiedInventory();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleTriggerSubmit = () => {
