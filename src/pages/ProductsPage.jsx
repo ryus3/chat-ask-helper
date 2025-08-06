@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
-import useUnifiedData from '@/hooks/useUnifiedData';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -24,7 +24,7 @@ import { toast } from '@/components/ui/use-toast';
 
 const ProductsPage = () => {
     const location = useLocation();
-    const { products, variants, isLoading, operations } = useUnifiedData();
+    const { products, loading: isLoading } = useUnifiedInventory();
     const { user, isAdmin, productPermissions, filterProductsByPermissions } = useAuth();
     const { hasPermission } = usePermissions();
   
@@ -284,7 +284,7 @@ const ProductsPage = () => {
     </div>
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />

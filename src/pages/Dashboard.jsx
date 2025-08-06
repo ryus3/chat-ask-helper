@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
-import useUnifiedData from '@/hooks/useUnifiedData';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 
 import { UserPlus, TrendingUp, DollarSign, PackageCheck, ShoppingCart, Users, Package, MapPin, User as UserIcon, Bot, Briefcase, TrendingDown, Hourglass, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,15 +33,14 @@ const Dashboard = () => {
     
     // استخدام النظام الموحد الجديد
     const {
-        products,
-        orders,
-        customers,
+        products: allProducts,
+        orders: allOrders,
+        customers: allCustomers,
+        profits: allProfits,
         calculations,
-        permissions,
-        isLoading,
-        operations,
+        loading: isLoading,
         error
-    } = useUnifiedData();
+    } = useUnifiedInventory();
 
     const [selectedPeriod, setSelectedPeriod] = useLocalStorage('dashboard-period', 'all');
     const [topProductsOpen, setTopProductsOpen] = useState(false);
@@ -52,8 +51,8 @@ const Dashboard = () => {
 
     // فلترة الطلبات حسب الفترة المحددة
     const filteredOrders = useMemo(() => {
-        return filterOrdersByPeriod(orders, selectedPeriod);
-    }, [orders, selectedPeriod]);
+        return filterOrdersByPeriod(allOrders, selectedPeriod);
+    }, [allOrders, selectedPeriod]);
 
     // الحسابات الموحدة للوحة التحكم
     const dashboardStats = useMemo(() => {

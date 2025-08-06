@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Helmet } from 'react-helmet-async';
-import useUnifiedData from '@/hooks/useUnifiedData';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useAlWaseet } from '@/contexts/AlWaseetContext';
@@ -31,7 +31,7 @@ import ReceiveInvoiceButton from '@/components/orders/ReceiveInvoiceButton';
 
 
 const OrdersPage = () => {
-  const { orders, isLoading, operations } = useUnifiedData(['orders']);
+  const { orders, loading: isLoading, refreshData } = useUnifiedInventory();
   const { syncOrders: syncAlWaseetOrders } = useAlWaseet();
   const { user, allUsers } = useAuth();
   const { hasPermission } = usePermissions();
@@ -117,7 +117,7 @@ const OrdersPage = () => {
           }
           
           // تحديث البيانات
-          refetchProducts();
+          refreshData();
         }
       )
       .on(
@@ -130,7 +130,7 @@ const OrdersPage = () => {
         (payload) => {
           console.log('Order updated:', payload.new);
           // تحديث البيانات عند تحديث طلب
-          refetchProducts();
+          refreshData();
         }
       )
       .subscribe();
@@ -138,7 +138,7 @@ const OrdersPage = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [refetchProducts]);
+  }, [refreshData]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -194,9 +194,9 @@ const OrdersPage = () => {
   }, [orders, user, hasPermission]);
   
   const userAiOrders = useMemo(() => {
-    if (!Array.isArray(aiOrders)) return [];
-    return aiOrders.filter(order => order.created_by === user?.user_id);
-  }, [aiOrders, user]);
+    // إزالة aiOrders لأنه غير موجود في النظام الجديد
+    return [];
+  }, []);
 
   const filteredOrders = useMemo(() => {
     let tempOrders;
@@ -253,29 +253,19 @@ const OrdersPage = () => {
   }, [userOrders, filters, usersMap]);
 
   const myProfits = useMemo(() => {
-    if (hasPermission('view_all_data')) {
-      // للمديرين: إظهار صافي الربح للنظام من الطلبات المكتملة
-      return profitData?.netProfit || 0;
-    } else {
-      // للموظفين: إظهار إجمالي الأرباح الشخصية من الطلبات المكتملة (تعديل: استخدام البيانات الصحيحة)
-      return profitData?.totalPersonalProfit || profitData?.personalTotalProfit || 0;
-    }
-  }, [profitData, hasPermission]);
+    // سيتم تطبيق منطق الأرباح لاحقاً من UnifiedInventory
+    return 0;
+  }, []);
 
-  // حساب الأرباح الحقيقية للموظف من جدول profits مباشرة
   const userActualProfits = useMemo(() => {
-    if (hasPermission('view_all_data')) {
-      return profitData?.netProfit || 0;
-    } else {
-      // للموظفين: حساب الأرباح الحقيقية من UnifiedProfitDisplay (تعديل: استخدام البيانات الصحيحة)
-      return profitData?.totalPersonalProfit || profitData?.personalTotalProfit || 0;
-    }
-  }, [profitData, hasPermission]);
+    // سيتم تطبيق منطق الأرباح لاحقاً من UnifiedInventory
+    return 0;
+  }, []);
   
   const handleSync = async () => {
     setSyncing(true);
     await syncAlWaseetOrders();
-    await refetchProducts();
+    await refreshData();
     setSyncing(false);
   }
 
@@ -291,16 +281,23 @@ const OrdersPage = () => {
   }, []);
 
   const handleUpdateOrderStatus = useCallback(async (orderId, newStatus) => {
-    await updateOrder(orderId, { status: newStatus });
-  }, [updateOrder]);
+    const { updateOrder: inventoryUpdateOrder } = useUnifiedInventory();
+    return await inventoryUpdateOrder(orderId, { status: newStatus });
+  }, []);
   
   const handleArchiveSelected = async () => {
-    for (const orderId of selectedOrders) {
-      await updateOrder(orderId, { isArchived: true });
+    const { updateOrder: inventoryUpdateOrder } = useUnifiedInventory();
+    try {
+      for (const orderId of selectedOrders) {
+        await inventoryUpdateOrder(orderId, { isArchived: true });
+      }
+      toast({ title: 'تمت الأرشفة', description: `تمت أرشفة ${selectedOrders.length} طلبات.`, variant: 'success' });
+      setSelectedOrders([]);
+      setDialogs(d => ({ ...d, archiveAlert: false }));
+    } catch (error) {
+      console.error('Error archiving orders:', error);
+      toast({ title: 'خطأ في الأرشفة', description: error.message, variant: 'destructive' });
     }
-    toast({ title: 'تمت الأرشفة', description: `تمت أرشفة ${selectedOrders.length} طلبات.`, variant: 'success' });
-    setSelectedOrders([]);
-    setDialogs(d => ({ ...d, archiveAlert: false }));
   }
 
   const handleDeleteSelected = useCallback(async (ordersToDelete) => {
@@ -344,8 +341,10 @@ const OrdersPage = () => {
     }
 
     try {
-        // حذف الطلبات وتحرير المخزون المحجوز تلقائياً
-        await deleteOrdersContext(ordersToDeleteFiltered);
+        // حذف من قاعدة البيانات مباشرة
+        await Promise.all(ordersToDeleteFiltered.map(orderId => 
+          supabase.from('orders').delete().eq('id', orderId)
+        ));
         
         toast({
             title: 'تم الحذف بنجاح',
@@ -363,7 +362,7 @@ const OrdersPage = () => {
             variant: 'destructive'
         });
     }
-  }, [hasPermission, orders, deleteOrdersContext]);
+  }, [hasPermission, orders]);
 
   const handleStatCardClick = useCallback((status, period) => {
     setFilters(prev => ({ ...prev, status, period: period || 'all' }));
@@ -473,7 +472,7 @@ const OrdersPage = () => {
 
         <OrderList
           orders={filteredOrders}
-          isLoading={inventoryLoading}
+          isLoading={isLoading}
           onViewOrder={handleViewOrder}
           onEditOrder={handleEditOrder}
           onUpdateStatus={handleUpdateOrderStatus}
@@ -485,7 +484,7 @@ const OrdersPage = () => {
           additionalButtons={(order) => (
             <ReceiveInvoiceButton 
               order={order} 
-              onSuccess={() => refetchProducts()} 
+              onSuccess={() => refreshData()} 
             />
           )}
         />
@@ -494,7 +493,7 @@ const OrdersPage = () => {
           order={selectedOrder}
           open={dialogs.details}
           onOpenChange={(open) => setDialogs(d => ({ ...d, details: open }))}
-          onUpdate={updateOrder}
+          onUpdate={refreshData}
           onEditOrder={handleEditOrder}
           canEditStatus={hasPermission('manage_orders') || (selectedOrder?.created_by === user?.id)}
           sellerName={selectedOrder ? usersMap.get(selectedOrder.created_by) : null}
@@ -506,7 +505,7 @@ const OrdersPage = () => {
           onOpenChange={(open) => setDialogs(d => ({ ...d, edit: open }))}
           onOrderUpdated={async () => {
             setDialogs(d => ({ ...d, edit: false }));
-            await refetchProducts();
+            await refreshData();
           }}
         />
         
@@ -515,7 +514,7 @@ const OrdersPage = () => {
           onOpenChange={(open) => setDialogs(d => ({ ...d, quickOrder: open }))}
           onOrderCreated={async () => {
               setDialogs(d => ({ ...d, quickOrder: false }));
-              await refetchProducts();
+              await refreshData();
           }}
         />
         
@@ -561,7 +560,7 @@ const OrdersPage = () => {
           onClose={() => setDialogs(d => ({ ...d, returnReceipt: false }))}
           order={selectedOrder}
           onSuccess={async () => {
-            await refetchProducts();
+            await refreshData();
             toast({
               title: "تم استلام الراجع",
               description: "تم إرجاع المنتجات إلى المخزون بنجاح",

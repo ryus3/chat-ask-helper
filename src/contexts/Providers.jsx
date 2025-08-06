@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext.jsx';
 import { UnifiedAuthProvider } from '@/contexts/UnifiedAuthContext.jsx';
-import { UnifiedInventoryProvider } from '@/contexts/UnifiedInventoryProvider.jsx';
+import { UnifiedInventoryProvider } from '@/contexts/UnifiedInventoryProvider';
 import { UnifiedNotificationsProvider } from '@/contexts/UnifiedNotificationsSystem.jsx';
 import { AiChatProvider } from '@/contexts/AiChatContext.jsx';
 

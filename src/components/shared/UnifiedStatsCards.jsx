@@ -13,7 +13,7 @@ import {
   CheckCircle 
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
-import useUnifiedData from '@/hooks/useUnifiedData';
+import { useUnifiedInventory } from '@/contexts/UnifiedInventoryProvider';
 
 /**
  * مكون موحد لعرض الإحصائيات في جميع الصفحات
@@ -24,7 +24,7 @@ const UnifiedStatsCards = ({
   layout = 'grid',
   variant = 'default'
 }) => {
-  const { calculations, isLoading, permissions } = useUnifiedData();
+  const { calculations, loading: isLoading } = useUnifiedInventory();
 
   if (isLoading) {
     return (
