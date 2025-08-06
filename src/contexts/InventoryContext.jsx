@@ -4,7 +4,6 @@ import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/UnifiedAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useNotifications } from '@/contexts/NotificationsContext';
-import { useNotificationsSystem } from '@/contexts/NotificationsSystemContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useProducts } from '@/hooks/useProducts.jsx';
 import { useCart } from '@/hooks/useCart.jsx';
@@ -20,7 +19,6 @@ export const InventoryProvider = ({ children }) => {
   const { user } = useAuth();
   const { hasPermission } = usePermissions();
   const { addNotification } = useNotifications();
-  const { notifyLowStock } = useNotificationsSystem();
   const [loading, setLoading] = useState(true);
   const [employeeProfitRules, setEmployeeProfitRules] = useState({});
   const [categories, setCategories] = useState([]);

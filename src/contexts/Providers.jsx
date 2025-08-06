@@ -5,9 +5,8 @@ import { UnifiedAuthProvider } from '@/contexts/UnifiedAuthContext.jsx';
 import { GlobalDataProvider } from '@/contexts/GlobalDataProvider.jsx';
 import { AiChatProvider } from '@/contexts/AiChatContext.jsx';
 import { NotificationsProvider } from '@/contexts/NotificationsContext.jsx';
-import { NotificationsSystemProvider } from '@/contexts/NotificationsSystemContext.jsx';
 
-// المحافظة على Providers المهمة فقط وإضافة Global Data Provider
+// نظام إشعارات موحد ومحسن للأداء
 export const AppProviders = ({ children }) => {
   return (
     <ThemeProvider>
@@ -15,11 +14,9 @@ export const AppProviders = ({ children }) => {
         <UnifiedAuthProvider>
           <GlobalDataProvider>
             <NotificationsProvider>
-              <NotificationsSystemProvider>
-                <AiChatProvider>
-                  {children}
-                </AiChatProvider>
-              </NotificationsSystemProvider>
+              <AiChatProvider>
+                {children}
+              </AiChatProvider>
             </NotificationsProvider>
           </GlobalDataProvider>
         </UnifiedAuthProvider>

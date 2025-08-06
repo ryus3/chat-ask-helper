@@ -20,7 +20,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { useNotifications } from '@/contexts/NotificationsContext';
-import { useNotificationsSystem } from '@/contexts/NotificationsSystemContext';
 import PendingRegistrations from './dashboard/PendingRegistrations';
 import AiOrdersManager from './dashboard/AiOrdersManager';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -215,7 +214,6 @@ const typeColorMap = {
 
 const NotificationsPanel = () => {
   const { notifications, markAsRead, markAllAsRead, clearAll, deleteNotification } = useNotifications();
-  const { notifications: systemNotifications, markAsRead: markSystemAsRead, markAllAsRead: markAllSystemAsRead, deleteNotification: deleteSystemNotification } = useNotificationsSystem();
   const [isOpen, setIsOpen] = useState(false);
   const [showPendingRegistrations, setShowPendingRegistrations] = useState(false);
   const [showAiOrdersManager, setShowAiOrdersManager] = useState(false);
@@ -226,11 +224,7 @@ const NotificationsPanel = () => {
     
     // تحديد الإشعار كمقروء
     if (!notification.is_read) {
-      if (notification.related_entity_type) {
-        markSystemAsRead(notification.id);
-      } else {
-        markAsRead(notification.id);
-      }
+      markAsRead(notification.id);
     }
     
     // التنقل المتقدم مع فلترة دقيقة حسب البيانات
@@ -366,11 +360,10 @@ const NotificationsPanel = () => {
     }
   };
 
-  // دمج الإشعارات من النظامين
-  const allNotifications = [
-    ...notifications.filter(n => n.type !== 'welcome'),
-    ...systemNotifications
-  ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  // فلترة الإشعارات وإزالة الترحيبية
+  const allNotifications = notifications
+    .filter(n => n.type !== 'welcome')
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   
   const unreadFilteredCount = allNotifications.filter(n => !n.is_read && !n.read).length;
 

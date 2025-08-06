@@ -26,31 +26,42 @@ export const NotificationsProvider = ({ children }) => {
     const fetchNotifications = useCallback(async (force = false) => {
         if (!user || !supabase) return;
         
-        // Use cache to reduce data usage
+        // استخدام cache لتقليل استهلاك البيانات
         const now = Date.now();
         if (!force && (now - lastFetch) < CACHE_DURATION) {
             return;
         }
         
-        let query = supabase
-            .from('notifications')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(30); // Reduced limit to save data
+        try {
+            let query = supabase
+                .from('notifications')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(25); // تقليل الحد للحفاظ على البيانات
 
-        // فلترة الإشعارات حسب المستخدم
-        const isAdmin = user?.roles?.includes('super_admin') || user?.roles?.includes('admin');
-        if (!isAdmin) {
-            query = query.or(`user_id.eq.${user.id},and(user_id.is.null,type.not.in.(profit_settlement_request,profit_settlement_completed,new_registration,low_stock,order_status_update_admin,new_order,cash_correction,balance_correction,main_cash_correction))`);
-        }
+            // فلترة أذكى للإشعارات حسب الدور
+            const isAdmin = user?.role === 'admin';
+            if (!isAdmin) {
+                // إشعارات المستخدم الشخصية فقط
+                query = query.eq('user_id', user.id);
+            } else {
+                // للمدير: إشعاراته الشخصية + الإشعارات العامة
+                query = query.or(`user_id.eq.${user.id},user_id.is.null`);
+            }
+            
+            const { data, error } = await query;
         
-        const { data, error } = await query;
-        
-        if (error) {
-            console.error("Error fetching notifications:", error);
-        } else {
-            setNotifications(data || []);
-            setLastFetch(now);
+            if (error) {
+                console.error("Error fetching notifications:", error);
+                return;
+            }
+            
+            if (data) {
+                setNotifications(data);
+                setLastFetch(now);
+            }
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
         }
     }, [user, lastFetch]);
 
