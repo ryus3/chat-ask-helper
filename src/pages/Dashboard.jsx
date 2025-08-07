@@ -99,26 +99,37 @@ const Dashboard = () => {
             {/* تنبيه المخزون في الأعلى */}
             <StockMonitoringSystem />
 
-            {/* الإحصائيات الجميلة للمديرين */}
+            {/* إحصائيات جميلة للمديرين */}
             {canViewAllData ? (
-                <ManagerDashboardSection 
-                    stats={{
-                        totalOrders: dashboardStats.totalOrders || 0,
-                        totalRevenue: dashboardStats.totalRevenue || 0,
-                        totalProducts: dashboardStats.totalProducts || 0,
-                        pendingOrders: dashboardStats.pendingOrders || 0,
-                        completedOrders: dashboardStats.periodCompleted || 0,
-                        lowStockProducts: dashboardStats.lowStockProducts || 0,
-                        pendingProfits: dashboardStats.totalProfits || 0,
-                        aiOrdersCount: allOrders?.filter(o => o.is_ai_order)?.length || 0
-                    }}
-                    orders={allOrders}
-                    profits={allProfits}
-                    products={allProducts}
-                />
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <ManagerDashboardSection 
+                        stats={{
+                            totalOrders: dashboardStats.totalOrders || 0,
+                            totalRevenue: dashboardStats.totalRevenue || 0,
+                            totalProducts: dashboardStats.totalProducts || 0,
+                            pendingOrders: dashboardStats.pendingOrders || 0,
+                            completedOrders: dashboardStats.periodCompleted || 0,
+                            lowStockProducts: dashboardStats.lowStockProducts || 0,
+                            pendingProfits: dashboardStats.totalProfits || 0,
+                            aiOrdersCount: allOrders?.filter(o => o.is_ai_order)?.length || 0
+                        }}
+                        orders={allOrders}
+                        profits={allProfits}
+                        products={allProducts}
+                    />
+                </motion.div>
             ) : (
-                /* إحصائيات مبسطة للموظفين */
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                /* إحصائيات جميلة للموظفين */
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
                     <StatCard
                         title="طلباتي"
                         value={filteredOrders.length}
@@ -140,7 +151,7 @@ const Dashboard = () => {
                         icon={AlertTriangle}
                         colors={['red-500', 'orange-500']}
                     />
-                </div>
+                </motion.div>
             )}
 
             {/* كارت طلب المحاسبة للموظفين فقط */}

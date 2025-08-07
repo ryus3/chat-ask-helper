@@ -35,35 +35,35 @@ const ManagerDashboardSection = ({ stats, orders, aiOrders, profits, products })
       title: "إجمالي الطلبات",
       value: stats.totalOrders,
       icon: ShoppingCart,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      colors: ['blue-500', 'sky-500'],
       trend: `${stats.pendingOrders} معلق`,
-      description: "جميع طلبات النظام"
+      description: "جميع طلبات النظام",
+      format: "number"
     },
     {
       title: "إجمالي الإيرادات",
-      value: `${stats.totalRevenue.toLocaleString()} د.ع`,
+      value: stats.totalRevenue,
       icon: DollarSign,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      description: "مجموع قيمة المبيعات"
+      colors: ['green-500', 'emerald-500'],
+      description: "مجموع قيمة المبيعات",
+      format: "currency"
     },
     {
       title: "إجمالي المنتجات",
       value: stats.totalProducts,
       icon: Package,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      colors: ['purple-500', 'violet-500'],
       trend: `${stats.lowStockProducts} منخفض`,
-      description: "منتجات في النظام"
+      description: "منتجات في النظام",
+      format: "number"
     },
     {
       title: "طلبات الذكاء الاصطناعي",
       value: stats.aiOrdersCount,
       icon: Bot,
-      color: "text-cyan-600",
-      bgColor: "bg-cyan-50",
-      description: "طلبات ذكية تحتاج مراجعة"
+      colors: ['cyan-500', 'blue-500'],
+      description: "طلبات ذكية تحتاج مراجعة",
+      format: "number"
     }
   ];
 
@@ -72,33 +72,33 @@ const ManagerDashboardSection = ({ stats, orders, aiOrders, profits, products })
       title: "الطلبات المعلقة",
       value: stats.pendingOrders,
       icon: Clock,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
-      description: "طلبات تحتاج متابعة"
+      colors: ['orange-500', 'amber-500'],
+      description: "طلبات تحتاج متابعة",
+      format: "number"
     },
     {
       title: "الطلبات المكتملة",
       value: stats.completedOrders,
       icon: CheckCircle,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      description: "طلبات تم تسليمها"
+      colors: ['green-500', 'emerald-500'],
+      description: "طلبات تم تسليمها",
+      format: "number"
     },
     {
       title: "الأرباح المعلقة",
-      value: `${stats.pendingProfits.toLocaleString()} د.ع`,
+      value: stats.pendingProfits,
       icon: TrendingUp,
-      color: "text-emerald-600",
-      bgColor: "bg-emerald-50",
-      description: "أرباح تحتاج تسوية"
+      colors: ['emerald-500', 'teal-500'],
+      description: "أرباح تحتاج تسوية",
+      format: "currency"
     },
     {
       title: "منتجات منخفضة",
       value: stats.lowStockProducts,
       icon: AlertTriangle,
-      color: "text-red-600",
-      bgColor: "bg-red-50",
-      description: "منتجات تحتاج تجديد المخزون"
+      colors: ['red-500', 'orange-500'],
+      description: "منتجات تحتاج تجديد المخزون",
+      format: "number"
     }
   ];
 
@@ -126,6 +126,8 @@ const ManagerDashboardSection = ({ stats, orders, aiOrders, profits, products })
                 title={stat.title}
                 value={stat.value}
                 icon={stat.icon}
+                colors={stat.colors}
+                format={stat.format}
                 trend={stat.trend}
                 description={stat.description}
                 className="hover:shadow-lg transition-shadow duration-300"
@@ -162,6 +164,8 @@ const ManagerDashboardSection = ({ stats, orders, aiOrders, profits, products })
                 title={stat.title}
                 value={stat.value}
                 icon={stat.icon}
+                colors={stat.colors}
+                format={stat.format}
                 description={stat.description}
                 className="hover:shadow-lg transition-shadow duration-300"
               />
